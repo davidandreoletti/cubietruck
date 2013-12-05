@@ -1,0 +1,81 @@
+ABOUT
+=====
+
+Script(s)/configs to generate a SD Card Image containing a custom OS
+which would run a Cubietruck :). Check out image support status for
+what's working and isn'nt.
+
+MOTIVATION:
+===========
+
+I am building a NAS using ARM based board (Cubietruck/Cubieboard3).
+As such as I needed a custom kernel and custom SD Card image.
+
+IMAGE SUPPORT STATUS
+=====================
+
+------------------------------------------------------
+| Description                      |  SD Card 
+------------------------------------------------------
+| NAND support			   |  N/A
+| SD card support		   |  Not working
+| Distribution Ubuntu 12.04	   |  Not working
+| Distribution Debian Wheezy	   |  Not working
+| OpenSSH server                   |  Not working
+| Ethernet support		   |  Not working
+| Ethernet static mac on boot      |  Not working
+| Wifi support			   |  Not working
+| Wifi static mac on boot	   |  Not working
+| SATA support			   |  Not working  
+| ZFS support			   |  Not working
+| ZFS Raid Z support	 	   |  Not working
+| 3D MALI support	 	   |  Not working
+| CedarX acclerated video	   |  Not working
+| Bluetooth support	 	   |  Not working
+------------------------------------------------------
+
+
+INSTALLATION:
+=============
+
+Setup pre-requisites:
+
+ bash manualbuild-setup.sh
+
+Build image(s):
+ 
+ SD Image:
+ bash manualbuild-build-sdcardimage.sh
+
+DOCUMENTATION
+=============
+
+Files are documented.
+
+SOURCE
+======
+
+Main source repository: https://github.com/davidandreoletti/cubietruck
+
+
+REQUIREMENTS
+============
+
+Succesfully tested on Ubuntu 12.04 LTS 
+
+CONTRIBUTORS:
+=============
+
+If you would like to contribute, feel free to do so.
+
+AUTHOR
+======
+
+David Andreoletti <http://davidandreoletti.com> - Original author
+
+THANKS
+======
+
+http://cubieboard.org - Initial documentation for building a custom kernel/SD image/NAND image - Cubiebord makers :)
+http://dl.cubieboard.org/public/users/soloforce/Construct_Your_Own_Debian_Linux_for_CubieBoard_zh-new.pdf - 
+https://github.com/equinoxorg/eko_client/wiki/Creating-a-Redeployable-SD-Card-Image - How to partition a block device
