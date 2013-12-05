@@ -3,14 +3,17 @@ ABOUT
 
 Script(s)/configs to generate a SD Card Image containing a custom OS
 which would run a Cubietruck :). Check out image support status for
-what's working and isn'nt.
+what's working and what isn'nt.
 
 MOTIVATION:
 ===========
 
 I am building a NAS using ARM based board (Cubietruck/Cubieboard3).
-As such as I needed a custom kernel and custom SD Card image.
-
+Therefore I needed a custom kernel and custom SD Card image. Those
+usually take some time to tweak/build with a lot of repeated. This
+project aims to reduce this repetition to the bare minimun and also
+a way to have predictable build :)
+ 
 IMAGE SUPPORT STATUS
 =====================
 
@@ -34,9 +37,14 @@ IMAGE SUPPORT STATUS
 | Bluetooth support	 	   |  Not working
 ------------------------------------------------------
 
-
 INSTALLATION:
 =============
+
+For the impatients:
+
+ bash manualbuild.sh
+
+For the other ones:
 
 Setup pre-requisites:
 
