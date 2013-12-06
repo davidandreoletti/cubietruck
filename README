@@ -84,6 +84,8 @@ David Andreoletti <http://davidandreoletti.com> - Original author
 THANKS
 ======
 
-http://cubieboard.org - Initial documentation for building a custom kernel/SD image/NAND image - Cubiebord makers :)
+http://cubieboard.org - Initial documentation for building a custom kernel/SD image/NAND image - Cubieboard makers :)
 http://dl.cubieboard.org/public/users/soloforce/Construct_Your_Own_Debian_Linux_for_CubieBoard_zh-new.pdf - 
 https://github.com/equinoxorg/eko_client/wiki/Creating-a-Redeployable-SD-Card-Image - How to partition a block device
+https://github.com/codeshredder/cubieboard2 - Miccelleanous documentation about Cubieboard.
+https://github.com/shmily/Cubieboard - Cubieboard Image build
