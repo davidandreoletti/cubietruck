@@ -1,6 +1,6 @@
 # Output dir for all generated files for the board (kernel, bin, etc)
 OUTPUT_DIR="`pwd`/output"
-OUTPUT_CLEAN=true
+OUTPUT_CLEAN=${OUTPUT_CLEAN:-true}
 # Toolchain: http://linux-sunxi.org/Toolchain
 TOOLCHAIN="arm-linux-gnueabi-"
 SCRIPT_BIN_FILE="script.bin"
@@ -25,8 +25,8 @@ LINUX_SUNXI_KERNEL_DEFAULT_CONFIG=${LINUX_SUNXI_KERNEL_DEFAULT_CONFIG:-"sun7i_de
 LINUX_SUNXI_PULL=${LINUX_SUNXI_PULL:-false}
 LINUX_SUNXI_CLEAN=${LINUX_SUNXI_CLEAN:-false}
 LINUX_SUNXI_BUILD_SKIP=${LINUX_SUNXI_BUILD_SKIP-:false}
-#SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
-SDCARD_IMG_FILE="`pwd`/sdcard.img"
+SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
+#SDCARD_IMG_FILE="`pwd`/sdcard.img"
 SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
 SDCARD_LOOPBACK_DEVICE="UNDEFINED"
 ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"linaro-raring-nano-20131203-571.tar.gz"}
@@ -101,7 +101,6 @@ logINFO "Build kernel"
 		${LINUX_SUNXI_CLEAN} && make distclean
 		echo "Load default kernel config"
 		make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" "${LINUX_SUNXI_KERNEL_DEFAULT_CONFIG}"
-		cp -v 
 		echo "Manually configure kernel config"
 		make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" menuconfig
 		echo "Build kernel image and modules"
@@ -109,10 +108,8 @@ logINFO "Build kernel"
 		nJobs=`echo ${nCores}*2 | bc`
 		time make -j${nJobs} ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" uImage modules
 		echo "Install kernel's full module tree"
-
 		make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" INSTALL_MOD_PATH="${MODULES_PATH}" modules_install
-		
-		mv -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || logAndExit NO_KERNEL_UIMAGE 1
+		cp -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || logAndExit NO_KERNEL_UIMAGE 1
 		test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}" || logAndExit NO_KERNEL_MODULES 1
 		#make kernelrelease
 		#make image_image 
@@ -174,10 +171,12 @@ EOT
 	sudo sfdisk -u S -l ${card}
 }
 
-export cardp="/dev/mapper/${card:5}p"
+
 
 {
-	sudo kpartx -av "${SDCARD_IMG_FILE}" 
+	mapping=`sudo kpartx -av "${SDCARD_IMG_FILE}"`
+	mappedCard=`echo "$mapping" | grep "add map" | head -n 1 | cut -d' ' -f3` 
+	export cardp="/dev/mapper/${mappedCard:0:5}p"
 	sudo mkfs.vfat -n BOOT ${cardp}1
 	sudo mkfs.ext4 -L ROOTFS ${cardp}2
 
