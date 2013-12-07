@@ -1,7 +1,7 @@
 # Manual setup based on http://linux-sunxi.org/Manual_build_howto
 
 echo Getting handy tools
-sudo apt-get install unp bc kpartx
+sudo apt-get install unp bc kpartx cu
 
 echo Getting build essentials
 sudo apt-get install build-essential git  libncurses5-dev
