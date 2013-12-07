@@ -27,4 +27,4 @@ echo Get Linux sunxi kernel
 git clone https://github.com/linux-sunxi/linux-sunxi.git
 
 echo Get rootfs
-wget http://snapshots.linaro.org/ubuntu/images/nano/latest/linaro-raring-nano-20131203-571.tar.gz
+wget "http://snapshots.linaro.org/ubuntu/images/nano/latest/linaro-raring-nano-20131205-573.tar.gz"

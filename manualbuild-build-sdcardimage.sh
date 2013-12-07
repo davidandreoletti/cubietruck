@@ -29,7 +29,7 @@ SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
 #SDCARD_IMG_FILE="`pwd`/sdcard.img"
 SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
 SDCARD_LOOPBACK_DEVICE="UNDEFINED"
-ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"linaro-raring-nano-20131203-571.tar.gz"}
+ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"`pwd`/linaro-raring-nano-20131205-573.tar.gz"}
 
 function logAndExit() {
 	echo $1;
@@ -90,13 +90,11 @@ logINFO "Build kernel"
 {
 	MODULES_PATH="${OUTPUT_DIR}"
 	KERNEL_IMG="arch/arm/boot/uImage"
-	KERNEL_VERSION=`make kernelversion`
 	KERNEL_OUTPUT_LIB_DIR="${MODULES_PATH}/lib"
 	KERNEL_OUTPUT_MODULES_DIR="${KERNEL_OUTPUT_LIB_DIR}/modules"
-	KERNEL_OUTPUT_MODULES_VERSION_DIR="${KERNEL_OUTPUT_MODULES_DIR}/${KERNEL_VERSION}/"
+	cd ${LINUX_SUNXI_DIR} 
 	if ! ${LINUX_SUNXI_BUILD_SKIP} ;
 	then
-		cd ${LINUX_SUNXI_DIR} 
 		${LINUX_SUNXI_PULL} && git pull && git checkout -b "${LINUX_SUNXI_KERNEL_BRANCH_NAME}"
 		${LINUX_SUNXI_CLEAN} && make distclean
 		echo "Load default kernel config"
@@ -107,14 +105,16 @@ logINFO "Build kernel"
 		nCores=`grep -c ^processor /proc/cpuinfo`
 		nJobs=`echo ${nCores}*2 | bc`
 		time make -j${nJobs} ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" uImage modules
-		echo "Install kernel's full module tree"
-		make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" INSTALL_MOD_PATH="${MODULES_PATH}" modules_install
-		cp -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || logAndExit NO_KERNEL_UIMAGE 1
-		test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}" || logAndExit NO_KERNEL_MODULES 1
-		#make kernelrelease
-		#make image_image 
-		cd -
+		KERNEL_VERSION=`make kernelversion`
 	fi
+	KERNEL_OUTPUT_MODULES_VERSION_DIR="${KERNEL_OUTPUT_MODULES_DIR}/${KERNEL_VERSION}/"
+	echo "Install kernel's full module tree"
+	test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}" || make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" INSTALL_MOD_PATH="${MODULES_PATH}" modules_install
+	cp -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || logAndExit NO_KERNEL_UIMAGE 1
+	test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}" || logAndExit NO_KERNEL_MODULES 1
+	#make kernelrelease
+	#make image_image 
+	cd -
 }
 
 logINFO "Create virtual SD card" 
@@ -210,8 +210,14 @@ BOOT_SCR_FILE="/mnt/boot.scr"
 logINFO "Create boot.cmd"
 {
 	sudo mount ${cardp}1 /mnt
-	# Set kernel arguments
+	# U-boot will pass bootargs content to the Linux kernel as boot arguments (aka command line)
+	## http://www.denx.de/wiki/view/DULG/UBootEnvVariables
+	# Kernel boot arguments:
+	## Most are documented here: https://www.kernel.org/doc/Documentation/kernel-parameters.txt
+	### /dev/mmcblk0pX: https://www.kernel.org/doc/Documentation/mmc/mmc-dev-parts.txt
 	sudo echo "setenv bootargs console=ttyS0,115200 console=tty0 root=/dev/mmcblk0p2 rootwait panic=10 ${extra}" >> ${BOOT_CMD_FILE} 
+	# Display U-Boot env variables
+	sudo echo "printenv" >> ${BOOT_CMD_FILE} 
 	# Load kernel and script.bin from partition
 	sudo echo "fatload mmc 0 0x43000000 script.bin || ext2load mmc 0 0x43000000 boot/script.bin fatload mmc 0 0x48000000 uImage || ext2load mmc 0 0x48000000 uImage boot/uImage bootm 0x48000000" >> ${BOOT_CMD_FILE} 
 	sudo umount /mnt
@@ -220,7 +226,7 @@ logINFO "Create boot.cmd"
 logINFO "Generate boot.src"
 {
 	sudo mount ${cardp}1 /mnt
-	mkimage -C none -A arm -T script -d ${BOOT_CMD_FILE} ${BOOT_SCR_FILE} 
+	sudo mkimage -C none -n "${U_BOOT_SUNXI_BOARD_MODEL} - U-Boot script image" -A arm -T script -d ${BOOT_CMD_FILE} ${BOOT_SCR_FILE} 
 	sudo umount /mnt
 }
 
@@ -228,13 +234,13 @@ logINFO "Installing kernel into rootfs"
 
 {
 	sudo mount ${cardroot} /mnt
-	mkdir -p /mnt/lib/modules
-	rm -rf /mnt/lib/modules/
-	cp -r "${KERNEL_OUTPUT_LIB_DIR}" /mnt/
+	sudo mkdir -p /mnt/lib/modules
+	sudo rm -rf /mnt/lib/modules/
+	sudo cp -rv "${KERNEL_OUTPUT_LIB_DIR}" /mnt/
 	sudo umount /mnt
 }
 
-logINFO "Now you should be able to boot your brand new installation".
+logINFO "SD Card Image done! Copy it over to a real SD Card and boot !".
 
 {
 	sudo kpartx -d "${SDCARD_IMG_FILE}" 
