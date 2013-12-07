@@ -89,3 +89,10 @@ http://dl.cubieboard.org/public/users/soloforce/Construct_Your_Own_Debian_Linux_
 https://github.com/equinoxorg/eko_client/wiki/Creating-a-Redeployable-SD-Card-Image - How to partition a block device
 https://github.com/codeshredder/cubieboard2 - Miccelleanous documentation about Cubieboard.
 https://github.com/shmily/Cubieboard - Cubieboard Image build
+http://eewiki.net/display/linuxonarm/BeagleBoard - Mics Kernel/SD Image creation 
+http://www.denx.de/wiki/view/DULG/UBootVersions - u-boot official documentation
+http://wiki.osdev.org/Loopback_Device#Hard_Disk_Images - Loop back devices in a nutshell
+http://tinyapps.org/docs/mount_partitions_from_disk_images.html - Mount partitions from disk images
+http://bill.station51.net/index.php?post/2010/01/30/HOWTO:-Booting-from-SD-card-using-U-Boot - Booting from SD Card with U-Boot
+http://wiki.openmoko.org/wiki/U-Boot_commands - U-Boot command from the Openmoko project
+http://www.cubieforums.com/index.php?topic=229.0 - Supported partition, partition size and offset
