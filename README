@@ -96,3 +96,7 @@ http://tinyapps.org/docs/mount_partitions_from_disk_images.html - Mount partitio
 http://bill.station51.net/index.php?post/2010/01/30/HOWTO:-Booting-from-SD-card-using-U-Boot - Booting from SD Card with U-Boot
 http://wiki.openmoko.org/wiki/U-Boot_commands - U-Boot command from the Openmoko project
 http://www.cubieforums.com/index.php?topic=229.0 - Supported partition, partition size and offset
+http://unix.stackexchange.com/questions/25258/ttyusb0-permission-changes-after-restart - Set permanent write permission on ttyUSB
+https://github.com/mpepping/osx-pl2303 - Open Source OSX driver for Prolific PL2303 serial to USB adapters
+http://www.prolific.com.tw - Proprietary driver for Prolific PL2303 serial to USB adapters
+ - I used this one on OSX 
