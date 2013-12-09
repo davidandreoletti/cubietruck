@@ -165,7 +165,7 @@ logINFO "Partitioning SD Card"
 {
 sudo sfdisk -f -R ${card}
 cat <<EOT | sudo sfdisk --force --in-order -u S ${card}
-2048,65536,L,
+2048,131072,L,
 ,,L
 EOT
 
