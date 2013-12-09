@@ -8,7 +8,7 @@ SUNXI_TOOLS_DIR=${SUNXI_TOOLS_DIR:-"`pwd`/sunxi-tools"}
 FEX2BIN_EXEC_FILE="${SUNXI_TOOLS_DIR}/fex2bin"
 # Board Name
 # Value: https://github.com/linux-sunxi/u-boot-sunxi/blob/sunxi/boards.cfg
-U_BOOT_SUNXI_BOARD_MODEL="cubietruck"
+U_BOOT_SUNXI_BOARD_MODEL="Cubietruck"
 U_BOOT_SUNXI_DIR=${U_BOOT_SUNXI_DIR:-"`pwd`/u-boot-sunxi"}
 U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE="`pwd`/sunxi-boards/sys_config/a20/cubietruck.fex"
 U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE="${OUTPUT_DIR}/cubietruck.fex"
@@ -22,11 +22,12 @@ MAC_ETH0=${MAC_ETH0:-"000000000000"}
 LINUX_SUNXI_DIR=${LINUX_SUNXI_DIR:-"`pwd`/linux-sunxi"}
 LINUX_SUNXI_KERNEL_BRANCH_NAME=${LINUX_SUNXI_KERNEL_BRANCH_NAME:-"sunxi-3.4"}
 LINUX_SUNXI_KERNEL_DEFAULT_CONFIG=${LINUX_SUNXI_KERNEL_DEFAULT_CONFIG:-"sun7i_defconfig"}
+LINUX_SUNXI_KERNEL_BOOT_ARGS=${LINUX_SUNXI_KERNEL_BOOT_ARGS:-"console=ttyS0,115200 console=tty0 root=/dev/mmcblk0p2 rootwait panic=10 loglevel=8 rootfstype=ext4 rootflags=discard"}
+LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA=${LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA:-""}
 LINUX_SUNXI_PULL=${LINUX_SUNXI_PULL:-false}
 LINUX_SUNXI_CLEAN=${LINUX_SUNXI_CLEAN:-false}
 LINUX_SUNXI_BUILD_SKIP=${LINUX_SUNXI_BUILD_SKIP-:false}
 SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
-#SDCARD_IMG_FILE="`pwd`/sdcard.img"
 SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
 SDCARD_LOOPBACK_DEVICE="UNDEFINED"
 ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"`pwd`/linaro-raring-nano-20131205-573.tar.gz"}
@@ -59,8 +60,8 @@ logINFO "Build bootloader u-boot-sunxi"
 		${U_BOOT_SUNXI_CLEAN} && make clean
 		make distclean CROSS_COMPILE="${TOOLCHAIN}"
 		time make "${U_BOOT_SUNXI_BOARD_MODEL}" CROSS_COMPILE="${TOOLCHAIN}"
-		test -e spl/u-boot-spl.bin || logAndExit NO_FILE 1
-		test -e u-boot.bin || logAndExit NO_FILE 1
+		test -e "${U_BOOT_SUNXI_BOARD_UBOOTSPL_BIN_FILE}" || logAndExit NO_FILE 1
+		test -e "${U_BOOT_SUNXI_BOARD_UBOOT_BIN_FILE}" || logAndExit NO_FILE 1
 		cd -
 	fi
 }
@@ -70,7 +71,7 @@ logINFO "Update sys_config for ${U_BOOT_SUNXI_BOARD_MODEL}"
 
 {
 	rm -v "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
-	cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
+	cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" || logINFO NO_FEX_COPIED 1
 	echo [dynamic] >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
 	echo MAC = "${MAC_ETH0}" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
 }
@@ -162,11 +163,12 @@ logINFO "Installing bootloader on SD Card"
 logINFO "Partitioning SD Card"
 
 {
-sudo sfdisk -f -R $card
-cat <<EOT | sudo sfdisk --in-order -uM $card
-1,16,c
+sudo sfdisk -f -R ${card}
+cat <<EOT | sudo sfdisk --force --in-order -u S ${card}
+2048,65536,L,
 ,,L
 EOT
+
 	sudo losetup -v -d "${SDCARD_LOOPBACK_DEVICE}"
 	sudo sfdisk -u S -l ${card}
 }
@@ -177,9 +179,8 @@ EOT
 	mapping=`sudo kpartx -av "${SDCARD_IMG_FILE}"`
 	mappedCard=`echo "$mapping" | grep "add map" | head -n 1 | cut -d' ' -f3` 
 	export cardp="/dev/mapper/${mappedCard:0:5}p"
-	sudo mkfs.vfat -n BOOT ${cardp}1
+	sudo mkfs.ext4 -n BOOT ${cardp}1
 	sudo mkfs.ext4 -L ROOTFS ${cardp}2
-
 }
 
 export cardroot=${cardp}2
@@ -215,7 +216,7 @@ logINFO "Create boot.cmd"
 	# Kernel boot arguments:
 	## Most are documented here: https://www.kernel.org/doc/Documentation/kernel-parameters.txt
 	### /dev/mmcblk0pX: https://www.kernel.org/doc/Documentation/mmc/mmc-dev-parts.txt
-	sudo echo "setenv bootargs console=ttyS0,115200 console=tty0 root=/dev/mmcblk0p2 rootwait panic=10 ${extra}" >> ${BOOT_CMD_FILE} 
+	sudo echo "setenv bootargs ${LINUX_SUNXI_KERNEL_BOOT_ARGS} ${LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA}" >> ${BOOT_CMD_FILE} 
 	# Display U-Boot env variables
 	sudo echo "printenv" >> ${BOOT_CMD_FILE} 
 	# Load kernel and script.bin from partition
