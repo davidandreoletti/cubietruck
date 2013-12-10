@@ -27,6 +27,7 @@ LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA=${LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA:-""}
 LINUX_SUNXI_PULL=${LINUX_SUNXI_PULL:-false}
 LINUX_SUNXI_CLEAN=${LINUX_SUNXI_CLEAN:-false}
 LINUX_SUNXI_BUILD_SKIP=${LINUX_SUNXI_BUILD_SKIP-:false}
+LINUX_SUNXI_CONFIG_SKIP=${LINUX_SUNXI_CONFIG_SKIP-:false}
 SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
 SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
 SDCARD_LOOPBACK_DEVICE="UNDEFINED"
@@ -101,7 +102,7 @@ logINFO "Build kernel"
 		echo "Load default kernel config"
 		make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" "${LINUX_SUNXI_KERNEL_DEFAULT_CONFIG}"
 		echo "Manually configure kernel config"
-		make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" menuconfig
+		${LINUX_SUNXI_CONFIG_SKIP} || make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" menuconfig
 		echo "Build kernel image and modules"
 		nCores=`grep -c ^processor /proc/cpuinfo`
 		nJobs=`echo ${nCores}*2 | bc`
@@ -189,8 +190,8 @@ logINFO "Installing Kernel"
 
 {
 	sudo mount ${cardp}1 /mnt/
-	cp linux-sunxi/arch/arm/boot/uImage /mnt/
-	cp "${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE}" /mnt/
+	sudo cp linux-sunxi/arch/arm/boot/uImage /mnt/
+	sudo cp "${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE}" /mnt/
 	sudo umount /mnt/
 }
 
@@ -199,8 +200,8 @@ logINFO "Mount rootfs"
 {
 	sudo mount ${cardroot} /mnt/
 	#tar -C /mnt/ -xjpf "${ROOTFS_FILE_COMPRESSED}"
-	cd /mnt/
-	unp "${ROOTFS_FILE_COMPRESSED}"
+	sudo cd /mnt/
+	sudo unp "${ROOTFS_FILE_COMPRESSED}"
 	cd -
 	sudo umount /mnt
 }
