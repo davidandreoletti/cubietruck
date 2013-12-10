@@ -27,8 +27,10 @@ LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA=${LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA:-""}
 LINUX_SUNXI_PULL=${LINUX_SUNXI_PULL:-false}
 LINUX_SUNXI_CLEAN=${LINUX_SUNXI_CLEAN:-false}
 LINUX_SUNXI_BUILD_SKIP=${LINUX_SUNXI_BUILD_SKIP-:false}
-BOOT_CMD_FILE="${OUTPUT_DIR}/boot.cmd"
-BOOT_SCR_FILE="${OUTPUT_DIR}/boot.scr"
+SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
+SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
+SDCARD_LOOPBACK_DEVICE="UNDEFINED"
+ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"`pwd`/linaro-raring-nano-20131205-573.tar.gz"}
 
 function logAndExit() {
 	echo $1;
@@ -70,16 +72,16 @@ logINFO "Update sys_config for ${U_BOOT_SUNXI_BOARD_MODEL}"
 {
 	rm -v "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
 	cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" || logINFO NO_FEX_COPIED 1
-	echo "[dynamic]" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
-	echo "MAC = ${MAC_ETH0}" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
+	echo [dynamic] >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
+	echo MAC = "${MAC_ETH0}" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
 }
 
 logINFO "Create ${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE} from ${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
 
 {
-	
+	test -e ${FEX2BIN_EXEC_FILE};
 	cd ${SUNXI_TOOLS_DIR}
-	test -e ${FEX2BIN_EXEC_FILE} || make fex2bin
+	make fex2bin
 	cd -
 	${FEX2BIN_EXEC_FILE} "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE}"
 }
@@ -88,7 +90,7 @@ logINFO "Build kernel"
 
 {
 	MODULES_PATH="${OUTPUT_DIR}"
-	KERNEL_IMG="${LINUX_SUNXI_DIR}/arch/arm/boot/uImage"
+	KERNEL_IMG="arch/arm/boot/uImage"
 	KERNEL_OUTPUT_LIB_DIR="${MODULES_PATH}/lib"
 	KERNEL_OUTPUT_MODULES_DIR="${KERNEL_OUTPUT_LIB_DIR}/modules"
 	cd ${LINUX_SUNXI_DIR} 
@@ -108,15 +110,107 @@ logINFO "Build kernel"
 	fi
 	KERNEL_OUTPUT_MODULES_VERSION_DIR="${KERNEL_OUTPUT_MODULES_DIR}/${KERNEL_VERSION}/"
 	echo "Install kernel's full module tree"
-	test -f "${KERNEL_IMG}" || logAndExit NO_KERNEL_UIMAGE 1
 	test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}" || make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" INSTALL_MOD_PATH="${MODULES_PATH}" modules_install
+	cp -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || logAndExit NO_KERNEL_UIMAGE 1
 	test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}" || logAndExit NO_KERNEL_MODULES 1
+	#make kernelrelease
+	#make image_image 
 	cd -
 }
 
+logINFO "Create virtual SD card" 
+
+SDCARD_LOOPBACK_DEVICE=`sudo losetup -f`
+
+{
+	if [ ! -f "${SDCARD_IMG_FILE}" ]
+	then
+		dd if=/dev/zero of="${SDCARD_IMG_FILE}" bs=1M count=${SDCARD_IMG_SIZE}
+	fi
+	sudo losetup -v "${SDCARD_LOOPBACK_DEVICE}" "${SDCARD_IMG_FILE}" 
+}
+
+logINFO "Identifying SD Card"
+
+export card=${SDCARD_LOOPBACK_DEVICE}	
+
+export cardSize=`sudo fdisk -l ${card} | grep Disk | awk '{print $5}'`
+export cardTracks=63
+export cardSectorSize=512
+export cardHeads=255
+export cardCylinders=`echo ${cardSize}/${cardHeads}/${cardTracks}/${cardSectorSize}| bc`
+echo "SD Card Device      : ${card}"
+echo "SD Card Size        : ${cardSize}"
+echo "SD Card #Heads      : ${cardHeads}"
+echo "SD Card #Cylinders  : ${cardCylinders}"
+echo "SD Card #Tracks     : ${cardTracks}"
+echo "SD Card Sector size : ${cardSectorSize}"
+
+logINFO "Cleaning SD Card"
+
+{
+	sudo dd if=/dev/zero of=$card bs=1M count=1
+	sudo sfdisk -u S -l ${card}
+}
+
+logINFO "Installing bootloader on SD Card" 
+# http://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
+{
+	sudo dd if="${U_BOOT_SUNXI_BOARD_UBOOTSPL_BIN_FILE}" of=$card bs=1024 seek=8
+	sudo dd if="${U_BOOT_SUNXI_BOARD_UBOOT_BIN_FILE}" of=$card bs=1024 seek=40
+}
+
+logINFO "Partitioning SD Card"
+
+{
+sudo sfdisk -f -R ${card}
+cat <<EOT | sudo sfdisk --force --in-order -u S ${card}
+2048,131072,L,
+,,L
+EOT
+
+	sudo losetup -v -d "${SDCARD_LOOPBACK_DEVICE}"
+	sudo sfdisk -u S -l ${card}
+}
+
+
+
+{
+	mapping=`sudo kpartx -av "${SDCARD_IMG_FILE}"`
+	mappedCard=`echo "$mapping" | grep "add map" | head -n 1 | cut -d' ' -f3` 
+	export cardp="/dev/mapper/${mappedCard:0:5}p"
+	sudo mkfs.ext4 -n BOOT ${cardp}1
+	sudo mkfs.ext4 -L ROOTFS ${cardp}2
+}
+
+export cardroot=${cardp}2
+
+logINFO "Installing Kernel"
+
+{
+	sudo mount ${cardp}1 /mnt/
+	cp linux-sunxi/arch/arm/boot/uImage /mnt/
+	cp "${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE}" /mnt/
+	sudo umount /mnt/
+}
+
+logINFO "Mount rootfs"
+
+{
+	sudo mount ${cardroot} /mnt/
+	#tar -C /mnt/ -xjpf "${ROOTFS_FILE_COMPRESSED}"
+	cd /mnt/
+	unp "${ROOTFS_FILE_COMPRESSED}"
+	cd -
+	sudo umount /mnt
+}
+
+BOOT_CMD_FILE="/mnt/boot.cmd"
+BOOT_SCR_FILE="/mnt/boot.scr"
 
 logINFO "Create boot.cmd"
 {
+	sudo mount ${cardp}1 /mnt
 	# U-boot will pass bootargs content to the Linux kernel as boot arguments (aka command line)
 	## http://www.denx.de/wiki/view/DULG/UBootEnvVariables
 	# Kernel boot arguments:
@@ -127,11 +221,30 @@ logINFO "Create boot.cmd"
 	sudo echo "printenv" >> ${BOOT_CMD_FILE} 
 	# Load kernel and script.bin from partition
 	sudo echo "fatload mmc 0 0x43000000 script.bin || ext2load mmc 0 0x43000000 boot/script.bin fatload mmc 0 0x48000000 uImage || ext2load mmc 0 0x48000000 uImage boot/uImage bootm 0x48000000" >> ${BOOT_CMD_FILE} 
+	sudo umount /mnt
 }
 
 logINFO "Generate boot.src"
 {
+	sudo mount ${cardp}1 /mnt
 	sudo mkimage -C none -n "${U_BOOT_SUNXI_BOARD_MODEL} - U-Boot script image" -A arm -T script -d ${BOOT_CMD_FILE} ${BOOT_SCR_FILE} 
+	sudo umount /mnt
 }
 
-manualbuild-make-hwpack.sh ${HWPACK_DIR} ${KERNEL_IMG} ${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE} ${U_BOOT_SUNXI_BOARD_UBOOTSPL_BIN_FILE} ${U_BOOT_SUNXI_BOARD_UBOOT_BIN_FILE} 
+logINFO "Installing kernel into rootfs"
+
+{
+	sudo mount ${cardroot} /mnt
+	sudo mkdir -p /mnt/lib/modules
+	sudo rm -rf /mnt/lib/modules/
+	sudo cp -rv "${KERNEL_OUTPUT_LIB_DIR}" /mnt/
+	sudo umount /mnt
+}
+
+logINFO "SD Card Image done! Copy it over to a real SD Card and boot !".
+
+{
+	sudo kpartx -d "${SDCARD_IMG_FILE}" 
+}
+
+echo 'DONE :)' 
