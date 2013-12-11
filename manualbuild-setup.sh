@@ -1,30 +1,35 @@
-# Manual setup based on http://linux-sunxi.org/Manual_build_howto
+#!/bin/bash
+. lib.sh
 
-echo Getting handy tools
+logINFO "Getting handy tools"
 sudo apt-get install unp bc kpartx cu
 
-echo Getting build essentials
-sudo apt-get install build-essential git  libncurses5-dev
+logINFO "Getting build essentials"
+sudo apt-get install build-essential git libncurses5-dev
 
-echo Getting cross toolchain
+logINFO "Getting cross toolchain"
 sudo apt-get install gcc-arm-linux-gnueabi
 
-echo Getting non cross compiler related tools for building sunxi kernel
+logINFO "Getting non cross compiler related tools for building sunxi kernel"
 sudo apt-get install debootstrap u-boot-tools 
 
-echo Get bootloader for sunxi kernel
-echo Doc: https://github.com/linux-sunxi/u-boot-sunxi/blob/sunxi/README
-
+logINFO "Get bootloader for sunxi kernel"
 git clone https://github.com/linux-sunxi/u-boot-sunxi.git 
 
-echo Get Allwinner hacking tools
+logINFO "Get Allwinner hacking tools"
 git clone git://github.com/linux-sunxi/sunxi-tools.git
 
-echo Get Sunxi boards sys_config
+logINFO "Get Sunxi boards sys_config"
 git clone git://github.com/linux-sunxi/sunxi-boards.git
 
-echo Get Linux sunxi kernel
+logINFO "Get Linux sunxi kernel"
 git clone https://github.com/linux-sunxi/linux-sunxi.git
 
-echo Get rootfs
-wget "http://snapshots.linaro.org/ubuntu/images/nano/latest/linaro-raring-nano-20131205-573.tar.gz"
+logINFO "Get Linux sunxi kernel"
+git clone https://github.com/linux-sunxi/linux-sunxi.git
+
+logINFO "Get Sunxi BSP"
+git clone https://github.com/linux-sunxi/sunxi-bsp 
+
+logINFO "Get rootfs"
+wget "http://snapshots.linaro.org/ubuntu/images/nano/579/linaro-saucy-nano-20131210-579.tar.gz" 

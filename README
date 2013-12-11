@@ -21,7 +21,7 @@ IMAGE SUPPORT STATUS
 | Description                      |  SD Card 
 ------------------------------------------------------
 | NAND support			   |  N/A
-| SD card support		   |  Not working
+| SD card support		   |  Working
 | Distribution Ubuntu 12.04	   |  Not working
 | Distribution Debian Wheezy	   |  Not working
 | OpenSSH server                   |  Not working
