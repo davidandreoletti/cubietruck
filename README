@@ -101,3 +101,6 @@ https://github.com/mpepping/osx-pl2303 - Open Source OSX driver for Prolific PL2
 http://www.prolific.com.tw - Proprietary driver for Prolific PL2303 serial to USB adapters
  - I used this one on OSX 
 http://www.denx.de/wiki/view/DULG/WhereCanIGetAValidMACAddress - Get Locally Administrated MAC address
+
+http://www.cubieboard.cmabreu.com.br/
+http://linux-sunxi.org/A20-Cubietruck
