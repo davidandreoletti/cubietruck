@@ -1,5 +1,6 @@
 #!/bin/bash
-. lib.sh
+SCRIPT_DIR=${SCRIPT_DIR:-`pwd`}
+. ${SCRIPT_DIR}/lib.sh
 
 SERIAL_DEVICE=${SERIAL_DEVICE:-"/dev/ttyUSB0"} # Assuming Prolific PL2303 like chip
 
