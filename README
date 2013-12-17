@@ -2,19 +2,21 @@ ABOUT
 =====
 
 Script(s)/configs to generate a SD Card Image containing a custom OS
-which would run a Cubietruck :). Check out image support status for
-what's working and what isn'nt.
+which would run a Cubietruck :). Check out "support status" section
+for what's working and what isn'nt.
 
 MOTIVATION:
 ===========
 
 I am building a NAS using ARM based board (Cubietruck/Cubieboard3).
-Therefore I needed a custom kernel and custom SD Card image. Those
-usually take some time to tweak/build with a lot of repeated. This
-project aims to reduce this repetition to the bare minimun and also
-a way to have predictable build :)
+Therefore I needed a custom kernel and custom rootfs packaged into 
+a custom SD Card image. These usually requires a lot of commands to
+type in and is time consuming. I wanted to reduce this as much and
+focus on tweaking/building an images to suit the objectives of my
+projects. This project aims to reduce repetitions to the bare minimun 
+and get a predictable build in the process :)
  
-IMAGE SUPPORT STATUS
+SUPPORT STATUS
 =====================
 
 ------------------------------------------------------
@@ -33,7 +35,7 @@ IMAGE SUPPORT STATUS
 | ntpd                             |  Not working
 ------------------------------------------------------
 | Ethernet support		           |  Not working
-|  emac driver support		       |  Not working
+|  sunxi-emac driver support	   |  Not working
 |   Driver loaded at startup       |  Not working
 |   Static MAC address on boot     |  Not working
 |  Sunxi-gmac driver support	   |  Not working

@@ -1,14 +1,12 @@
-# Bootable SD card: http://linux-sunxi.org/Bootable_SD_card
-
 # Setup:
 ## eth:
 ### MAC addresse eth0 - set to static http://linux-sunxi.org/FirstSteps
-### DHCP
+### DHCP - http://ubuntuforums.org/showthread.php?t=1979309
 ## wlan:
 ### MAC address wlan
 ### DHCP
 ## No X
-## SSH SERVER
+## SSH SERVER on standard port
 # Install:
 ## Rsync
 ## duplicity backup cheker daemon 
