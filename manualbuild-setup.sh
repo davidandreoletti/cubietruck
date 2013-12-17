@@ -1,5 +1,9 @@
 #!/bin/bash
-. lib.sh
+SCRIPT_DIR=${SCRIPT_DIR:-`pwd`}
+. ${SCRIPT_DIR}/lib.sh
+
+ROOTFS_FILE_COMPRESSED_URL="http://snapshots.linaro.org/ubuntu/images/nano/573/linaro-raring-nano-20131205-573.tar.gz"
+ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"UNDEFINED"}
 
 logINFO "Getting handy tools"
 sudo apt-get install unp bc kpartx cu
@@ -23,7 +27,8 @@ logINFO "Get Sunxi boards sys_config"
 git clone git://github.com/linux-sunxi/sunxi-boards.git
 
 logINFO "Get Linux sunxi kernel"
-git clone https://github.com/linux-sunxi/linux-sunxi.git
+#git clone https://github.com/linux-sunxi/linux-sunxi.git linux-sunxi
+git clone https://github.com/patrickhwood/linux-sunxi.git linux-sunxi
 
 logINFO "Get Linux sunxi kernel"
 git clone https://github.com/linux-sunxi/linux-sunxi.git
@@ -32,4 +37,4 @@ logINFO "Get Sunxi BSP"
 git clone https://github.com/linux-sunxi/sunxi-bsp 
 
 logINFO "Get rootfs"
-wget "http://snapshots.linaro.org/ubuntu/images/nano/579/linaro-saucy-nano-20131210-579.tar.gz" 
+wget -o "ROOTFS_FILE_COMPRESSED" "${ROOTFS_FILE_COMPRESSED_URL}" 

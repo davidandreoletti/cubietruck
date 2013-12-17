@@ -3,7 +3,7 @@ SCRIPT_DIR=${SCRIPT_DIR:-`pwd`}
 . ${SCRIPT_DIR}/lib.sh
 
 # Output dir for all generated files for the board (kernel, bin, etc)
-OUTPUT_DIR="`pwd`/output"
+OUTPUT_DIR=${OUTPUT_DIR:-"`pwd`/output"}
 OUTPUT_CLEAN=${OUTPUT_CLEAN:-true}
 # Toolchain: http://linux-sunxi.org/Toolchain
 TOOLCHAIN="arm-linux-gnueabi-"
