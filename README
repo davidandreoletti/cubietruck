@@ -20,21 +20,41 @@ IMAGE SUPPORT STATUS
 ------------------------------------------------------
 | Description                      |  SD Card 
 ------------------------------------------------------
-| NAND support			   |  N/A
-| SD card support		   |  Working
-| Distribution Ubuntu 12.04	   |  Not working
-| Distribution Debian Wheezy	   |  Not working
+| NAND support			           |  N/A
+------------------------------------------------------
+| SD card support		           |  Working
+------------------------------------------------------
+| Distribution Ubuntu 12.04	LTS    |  Not working
+|  Ubuntu Core 12.04 LTS           |
+| OR Distribution Debian Wheezy	   |  Not working
+------------------------------------------------------
 | OpenSSH server                   |  Not working
-| Ethernet support		   |  Not working
-| Ethernet static mac on boot      |  Not working
-| Wifi support			   |  Not working
-| Wifi static mac on boot	   |  Not working
-| SATA support			   |  Not working  
-| ZFS support			   |  Not working
-| ZFS Raid Z support	 	   |  Not working
-| 3D MALI support	 	   |  Not working
-| CedarX acclerated video	   |  Not working
-| Bluetooth support	 	   |  Not working
+------------------------------------------------------
+| Ethernet support		           |  Not working
+|  emac driver support		       |  Not working
+|   Driver loaded at startup       |  Not working
+|   Static MAC address on boot     |  Not working
+|  Sunxi-gmac driver support	   |  Not working
+|   Driver loaded at startup       |  Not working
+|   Static MAC address on boot     |  Not working
+|  DHCP IP                         |  Not working
+------------------------------------------------------
+| Wifi support			           |  Not working
+|  ??? driver support	           |  Not working
+|   Driver loaded at startup       |  Not working
+|   Static MAC address on boot     |  Not working
+|  DHCP IP                         |  Not working
+------------------------------------------------------
+| SATA support			           |  Not working  
+------------------------------------------------------
+| ZFS support			           |  Not working
+| ZFS Raid Z support	 	       |  Not working
+------------------------------------------------------
+| 3D MALI support	 	           |  Not working
+------------------------------------------------------
+| CedarX acclerated video	       |  Not working
+------------------------------------------------------
+| Bluetooth support	 	           |  Not working
 ------------------------------------------------------
 
 INSTALLATION:
@@ -84,6 +104,9 @@ David Andreoletti <http://davidandreoletti.com> - Original author
 THANKS
 ======
 
+REFERENCES
+==========
+
 http://cubieboard.org - Initial documentation for building a custom kernel/SD image/NAND image - Cubieboard makers :)
 http://dl.cubieboard.org/public/users/soloforce/Construct_Your_Own_Debian_Linux_for_CubieBoard_zh-new.pdf - 
 https://github.com/equinoxorg/eko_client/wiki/Creating-a-Redeployable-SD-Card-Image - How to partition a block device
@@ -104,3 +127,24 @@ http://www.denx.de/wiki/view/DULG/WhereCanIGetAValidMACAddress - Get Locally Adm
 
 http://www.cubieboard.cmabreu.com.br/
 http://linux-sunxi.org/A20-Cubietruck
+
+http://packages.ubuntu.com/lucid/ubuntu-minimal
+http://www.solid-run.com/mw/index.php/Ubuntu_Core
+http://wiki.dave.eu/index.php/Running_Ubuntu_Core
+https://github.com/DavidBercovitz/ubuntu-core/blob/master/ubuntuCoreSetup.sh
+https://help.ubuntu.com/community/Repositories/Ubuntu
+http://www.omappedia.com/wiki/OMAP_Ubuntu_Core
+https://launchpad.net/ubuntu/precise/armhf
+http://forum.doozan.com/read.php?6,8491
+http://old-releases.ubuntu.com/releases/ubuntu-core/releases/12.04.0/release/
+http://snapshots.linaro.org/ubuntu/images/server/553
+https://github.com/cubiebook/cubiebook
+
+http://sigpipe.me/?p=10 - Cedar X 
+http://www.memetic.org/raspbian-benchmarking-armel-vs-armhf/
+http://hands.com/~lkcl/allwinner_linux_proposal.txt
+https://github.com/hramrach/linux-sunxi
+http://elinux.org/images/a/ad/Arm-soc-checklist.pdf
+http://www.cnx-software.com/development-kits/linux-development-boards/
+http://forum.doozan.com/read.php?6,10087
+http://linux-sunxi.org/Mainline_Kernel_Howto
