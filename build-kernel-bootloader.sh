@@ -36,47 +36,16 @@ LINUX_SUNXI_CONFIG_SKIP=${LINUX_SUNXI_CONFIG_SKIP:-false}
 SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
 SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
 SDCARD_LOOPBACK_DEVICE="UNDEFINED"
-ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"UNDEFINED"}
+ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"${WORKING_DIR}/rootfs.tar.gz"}
 BOOT_PARTITION_SIZE=64
 BOOT_PARTITION_TYPE=vfat
 ROOT_PARTITION_TYPE=ext4
-
-function mountImageAsLoopbackDevice() {
-	local d=$(losetup -fv $1 | grep "Loop device is" | cut -d' ' -f4)
-	echo "$d"
-}
-
-function umountLoopbackDevice() {
-	sleep 5
-	losetup -d $1
-}
-
-# arg1: size in bytes
-# arg2: heads
-# arg3: sectors
-# arg4: bytes per sector
-function computeDeviceGeometryCylinders() {
-	echo "$1 / $2 / $3 / $4" | bc
-}
-
-function mountPartitionsAsLoopbackDevices() {
-	local mapping=`sudo kpartx -av "$1"`
-	ls -al /dev/mapper/
-	local mappedCard=`echo "$mapping" | grep "add map" | head -n 1 | cut -d' ' -f3` 
-	local cardp="/dev/mapper/${mappedCard:0:5}p"
-	export cardboot=${cardp}1
-	export cardroot=${cardp}2
-	sleep 3
-}
-
-function umountPartitionsAsLoopbackDevices() {
-	sudo kpartx -d "$1" 
-}
+CUSTOM_ROOTFS_DIR="${SCRIPT_DIR}/custom/rootfs"
 
 ${OUTPUT_CLEAN} && rm -rf "${OUTPUT_DIR}"
 mkdir "${OUTPUT_DIR}"
 
-logINFO "Build bootloader u-boot-sunxi"
+f_logINFO "Build bootloader u-boot-sunxi"
 
 if ! ${U_BOOT_SUNXI_BUILD_SKIP} ;
 then
@@ -85,19 +54,19 @@ then
 	${U_BOOT_SUNXI_CLEAN} && make clean
 	make distclean CROSS_COMPILE="${TOOLCHAIN}"
 	time make "${U_BOOT_SUNXI_BOARD_MODEL}" CROSS_COMPILE="${TOOLCHAIN}"
-	test -e "${U_BOOT_SUNXI_BOARD_UBOOTSPL_BIN_FILE}" || logAndExit NO_FILE 1
-	test -e "${U_BOOT_SUNXI_BOARD_UBOOT_BIN_FILE}" || logAndExit NO_FILE 1
+	test -e "${U_BOOT_SUNXI_BOARD_UBOOTSPL_BIN_FILE}" || f_logAndExit NO_FILE 1
+	test -e "${U_BOOT_SUNXI_BOARD_UBOOT_BIN_FILE}" || f_logAndExit NO_FILE 1
 	cd -
 fi
 
-logINFO "Update sys_config for ${U_BOOT_SUNXI_BOARD_MODEL}"
+f_logINFO "Update sys_config for ${U_BOOT_SUNXI_BOARD_MODEL}"
 
 rm -v "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
-cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" || logINFO NO_FEX_COPIED 1
+cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" || f_logINFO NO_FEX_COPIED 1
 echo [dynamic] >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" # http://linux-sunxi.org/EMAC
 echo MAC = "${MAC_ETH0}" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
 
-logINFO "Create ${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE} from ${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
+f_logINFO "Create ${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE} from ${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
 
 test -e ${FEX2BIN_EXEC_FILE};
 cd ${SUNXI_TOOLS_DIR}
@@ -105,7 +74,7 @@ make fex2bin
 cd -
 ${FEX2BIN_EXEC_FILE} "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE}"
 
-logINFO "Build kernel"
+f_logINFO "Build kernel"
 
 MODULES_PATH="${OUTPUT_DIR}"
 KERNEL_IMG="arch/arm/boot/uImage"
@@ -130,74 +99,68 @@ KERNEL_VERSION=`make kernelversion`
 KERNEL_OUTPUT_MODULES_VERSION_DIR="${KERNEL_OUTPUT_MODULES_DIR}/${KERNEL_VERSION}"
 echo "Install kernel's full module tree"
 test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}"* || make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" INSTALL_MOD_PATH="${MODULES_PATH}" modules_install
-cp -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || logAndExit NO_KERNEL_UIMAGE 1
-test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}"* || logAndExit NO_KERNEL_MODULES 1
+cp -v "${KERNEL_IMG}" "${OUTPUT_DIR}/" || f_logAndExit NO_KERNEL_UIMAGE 1
+test -d "${KERNEL_OUTPUT_MODULES_VERSION_DIR}"* || f_logAndExit NO_KERNEL_MODULES 1
 cd -
 
-logINFO "Create virtual SD card device" 
+f_logINFO "Create virtual SD card device" 
 
 if [ ! -f "${SDCARD_IMG_FILE}" ]
 then
 	dd if=/dev/zero of="${SDCARD_IMG_FILE}" bs=1M count=${SDCARD_IMG_SIZE}
-else
-	logAndExit "NO_SDCARD_IMAGE_FILE"
 fi
 
-# sudo losetup -v "${SDCARD_LOOPBACK_DEVICE}" "${SDCARD_IMG_FILE}"
-card=$(mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
-umountLoopbackDevice "${card}"
+f_logINFO "Cleaning SD Card"
 
-logINFO "Cleaning SD Card"
-
-card=$(mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
-sudo dd if=/dev/zero of=$card bs=1M count=1 || logAndExit "Failed to clean SD Card" 1
-umountLoopbackDevice "${card}"
+card=$(f_mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
+sudo dd if=/dev/zero of=$card bs=1M count=1 || f_logAndExit "Failed to clean SD Card" 1
+f_umountLoopbackDevice "${card}"
 
 
-logINFO "Partitioning SD Card"
+f_logINFO "Partitioning SD Card"
 
 deviceSize=$(stat -c%s ${SDCARD_IMG_FILE})
 deviceHeads=255
 deviceSectors=63
 deviceBytesPerSector=512
-deviceCylinders=$(computeDeviceGeometryCylinders ${deviceSize} ${deviceHeads} ${deviceSectors} ${deviceBytesPerSector})
+deviceCylinders=$(f_computeDeviceGeometryCylinders ${deviceSize} ${deviceHeads} ${deviceSectors} ${deviceBytesPerSector})
 
-card=$(mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
+card=$(f_mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
 x=$(expr $BOOT_PARTITION_SIZE \* 2048)
 sudo sfdisk --force --in-order -L -uS -H ${deviceHeads} -S ${deviceSectors} -C ${deviceCylinders} ${card} <<-EOT
 2048,$x,c
 ,,L
 EOT
 [ $? -eq 0 ] || logAnExit "Partitionning failed" 1
-umountLoopbackDevice "${card}"
+f_umountLoopbackDevice "${card}"
 
-card=$(mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
-sudo sfdisk --force -L -R ${card} || logAndExit "Cannot reload media"
-umountLoopbackDevice "${card}"
+card=$(f_mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
+sudo sfdisk --force -L -R ${card} || f_logAndExit "Cannot reload media"
+f_umountLoopbackDevice "${card}"
 
-logINFO "Formatting partitions"
+f_logINFO "Formatting partitions"
 
-mountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
+f_mountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
 
 sudo mkfs.${BOOT_PARTITION_TYPE} -n BOOT ${cardboot}
 sudo mkfs.${ROOT_PARTITION_TYPE} -L ROOTFS ${cardroot}
 
-umountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
+f_umountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
 
-logINFO "Installing bootloader on SD Card" 
+f_logINFO "Installing bootloader on SD Card" 
 # http://linux-sunxi.org/Bootable_SD_card#SD_Card_Layout
 
-card=$(mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
+card=$(f_mountImageAsLoopbackDevice "${SDCARD_IMG_FILE}")
 # Make MMC 0 detected
 sudo dd if="${U_BOOT_SUNXI_BOARD_UBOOT_WITH_SPL_BIN_FILE}" of=$card bs=1024 seek=8
 # Does not make MMC 0 detected
 #sudo dd if="${U_BOOT_SUNXI_BOARD_UBOOTSPL_BIN_FILE}" of=$card bs=1024 seek=8
 #sudo dd if="${U_BOOT_SUNXI_BOARD_UBOOT_BIN_FILE}" of=$card bs=1024 seek=32
-umountLoopbackDevice "${card}"
+f_umountLoopbackDevice "${card}"
 
-mountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
+f_mountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
 
-logINFO "Installing Kernel"
+f_logINFO "Installing Kernel"
 
 sudo mount -t ${BOOT_PARTITION_TYPE} ${cardboot} /mnt
 sudo cp linux-sunxi/arch/arm/boot/uImage /mnt/
@@ -208,7 +171,7 @@ BOOT_CMD_FILE="/mnt/boot.cmd"
 BOOT_SCR_FILE="/mnt/boot.src"
 BOOT_UENV_FILE="/mnt/uEnv.txt"
 
-logINFO "Generating ${BOOT_UENV_FILE}"
+f_logINFO "Generating ${BOOT_UENV_FILE}"
 
 sudo mount -t ${BOOT_PARTITION_TYPE} ${cardboot} /mnt
 sudo echo "setenv bootargs ${LINUX_SUNXI_KERNEL_BOOT_ARGS} ${LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA}" >> ${BOOT_UENV_FILE} 
@@ -219,7 +182,7 @@ sudo echo "fatload mmc 0 0x43000000 script.bin || ext2load mmc 0 0x43000000 boot
 ls -al /mnt/
 sudo umount /mnt
 
-#logINFO "Generating boot.cmd"
+#f_logINFO "Generating boot.cmd"
 #
 #sudo mount -t ${BOOT_PARTITION_TYPE} ${cardboot} /mnt
 #sudo echo "setenv bootargs ${LINUX_SUNXI_KERNEL_BOOT_ARGS} ${LINUX_SUNXI_KERNEL_BOOT_ARGS_EXTRA}" >> ${BOOT_CMD_FILE} 
@@ -229,14 +192,14 @@ sudo umount /mnt
 #sudo echo "fatload mmc 0 0x43000000 script.bin || ext2load mmc 0 0x43000000 boot/script.bin fatload mmc 0 0x48000000 uImage || ext2load mmc 0 0x48000000 uImage boot/uImage bootm 0x48000000" >> ${BOOT_CMD_FILE} 
 #sudo umount /mnt
 
-#logINFO "Generate boot.src"
+#f_logINFO "Generate boot.src"
 #	
 #sudo mount -t ${BOOT_PARTITION_TYPE} ${cardboot} /mnt
 #sudo mkimage -C none -n "${U_BOOT_SUNXI_BOARD_MODEL} - U-Boot script image" -A arm -T script -d ${BOOT_CMD_FILE} ${BOOT_SCR_FILE} 
 #ls -al /mnt
 #sudo umount /mnt
 
-logINFO "Installing kernel into rootfs"
+f_logINFO "Installing kernel into rootfs"
 
 sudo mount -t ${ROOT_PARTITION_TYPE} ${cardroot} /mnt
 sudo mkdir -p /mnt/lib/modules
@@ -244,7 +207,7 @@ sudo rm -rf /mnt/lib/modules/
 sudo cp -r "${KERNEL_OUTPUT_LIB_DIR}" /mnt/
 sudo umount /mnt
 
-logINFO "Installing rootfs"
+f_logINFO "Installing rootfs"
 
 sudo mount -t ${ROOT_PARTITION_TYPE} ${cardroot} /mnt
 TMP_DIR=`mktemp -d`
@@ -255,11 +218,16 @@ cd "${TMP_DIR}/binary"
 cp -r ./ /mnt
 cd -
 rm -rf ${TMP_DIR}
+sudo umount /mnt
+
+sudo mount -t ${ROOT_PARTITION_TYPE} ${cardroot} /mnt
+"${SCRIPT_DIR}/customize-mounted-rootfs.sh" "/mnt" "${SCRIPT_DIR}/custom/rootfs/"
 ls -al /mnt/
 sudo umount /mnt
 
-logINFO "SD Card Image done! Copy it over to a real SD Card and boot !".
 
-umountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
+f_logINFO "SD Card Image done! Copy it over to a real SD Card and boot !".
+
+f_umountPartitionsAsLoopbackDevices "${SDCARD_IMG_FILE}"
 
 echo 'DONE :)' 

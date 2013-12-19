@@ -1,0 +1,6 @@
+# The primary interface
+#  - MAC is "locally administered". See http://en.wikipedia.org/wiki/MAC_address
+auto eth0
+allow-hotplug eth0
+iface eth0 inet dhcp
+	hwaddress ether AE-50-30-27-5A-CF
