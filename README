@@ -19,65 +19,54 @@ and get a predictable build in the process :)
 SUPPORT STATUS
 =====================
 
-------------------------------------------------------
-| Description                      |  SD Card 
-------------------------------------------------------
-| NAND support			           |  NA
-------------------------------------------------------
-| SD card support		           |  Working
-------------------------------------------------------
-| Distribution Ubuntu 12.04	LTS    |  Not working
-|  Ubuntu Core 12.04 LTS           |
-| OR Distribution Debian Wheezy	   |  Not working
-------------------------------------------------------
-| OpenSSH server                   |  Not working
-------------------------------------------------------
-| ntpd                             |  Not working
-------------------------------------------------------
-| Ethernet support		           |  Not working
-|  sunxi-emac driver support	   |  Not working
-|   Driver loaded at startup       |  Not working
-|   Static MAC address on boot     |  Not working
-|  Sunxi-gmac driver support	   |  Not working
-|   Driver loaded at startup       |  Not working
-|   Static MAC address on boot     |  Not working
-|  DHCP IP                         |  Not working
-------------------------------------------------------
-| Wifi support			           |  Not working
-|  ??? driver support	           |  Not working
-|   Driver loaded at startup       |  Not working
-|   Static MAC address on boot     |  Not working
-|  DHCP IP                         |  Not working
-------------------------------------------------------
-| SATA support			           |  Not working  
-------------------------------------------------------
-| ZFS support			           |  Not working
-| ZFS Raid Z support	 	       |  Not working
-------------------------------------------------------
-| 3D MALI support	 	           |  Not working
-------------------------------------------------------
-| CedarX acclerated video	       |  Not working
-------------------------------------------------------
-| Bluetooth support	 	           |  Not working
-------------------------------------------------------
+Description                      |SD Card      |Details
+:--------------------------------|:------------|:--------------
+NAND support                     |  NA         |
+SD card support                  |  Working    |
+Distribution Ubuntu 12.04 LTS    |  Not working|
+ Ubuntu Core 12.04 LTS           |             |
+ Linaro Nano                     |             |
+OR Distribution Debian Wheezy    |  Not working|
+OpenSSH server                   |  Not working|
+Custom packages support          |  Working    |
+ntpd                             |  Not working|
+Ethernet support                 |  Not working|
+->DHCP IP                        |  Working    | custom/rootfs/etc/network/interfaces
+->Sunxi-GMAC driver support      |  Working    |
+-->Driver loaded at startup      |  Working    | custom/rootfs/etc/modules
+-->Static MAC address on boot    |  Working    | custom/rootfs/etc/network/interfaces
+->Sunxi-EMAC driver support      |  NA         |
+-->Driver loaded at startup      |  NA         |
+-->Static MAC address on boot    |  NA         |
+Wifi support                     |  Not working|
+->??? driver support	         |  Not working|
+-->Driver loaded at startup      |  Not working|
+-->Static MAC address on boot    |  Not working|
+->DHCP IP                        |  Not working|
+SATA support                     |  Not working|  
+ZFS support                      |  Not working|
+ZFS Raid Z support               |  Not working|
+3D MALI support                  |  Not working|
+CedarX acclerated video	         |  Not working|
+Bluetooth support                |  Not working|
 
 INSTALLATION:
 =============
 
-For the impatients:
+TLDR:
 
- bash manualbuild.sh
+ bash build-sdcardimage.sh
 
 For the other ones:
 
 Setup pre-requisites:
 
- bash manualbuild-setup.sh
+ bash prerequisites.sh
 
 Build image(s):
  
  SD Image:
- bash manualbuild-build-sdcardimage.sh
+ bash build-kernel-bootloader.sh
 
 DOCUMENTATION
 =============
@@ -134,6 +123,10 @@ MAC address
 -----------
 http://www.denx.de/wiki/view/DULG/WhereCanIGetAValidMACAddress - Get Locally Administrated MAC address
 
+Wifi
+----
+http://bernaerts.dyndns.org/linux/74-ubuntu/230-ubuntu-setup-wifi-commandline
+
 http://www.cubieboard.cmabreu.com.br/
 http://linux-sunxi.org/A20-Cubietruck
 http://packages.ubuntu.com/lucid/ubuntu-minimal
@@ -156,8 +149,17 @@ http://elinux.org/images/a/ad/Arm-soc-checklist.pdf
 http://www.cnx-software.com/development-kits/linux-development-boards/
 http://forum.doozan.com/read.php?6,10087
 
+Rootfs customization
+--------------------
+http://omappedia.org/wiki/OMAP_Ubuntu_Core
+
 AllWinner's linux kernel and current attempts to get their changes in mainline kernel 
 --------------------------------------------------------------------------------------
 http://linux-sunxi.org/Mainline_Kernel_Howto - AllWinner Community trying to get linux-sunxi work into the mainline kernel
 http://lwn.net/Articles/554822/ - Merging Allwinner support
 http://lists.debian.org/debian-arm/2013/06/msg00009.html - Thread about how to convince (among others topic related to Allwinner) Allwinner to merge their kernel work in mainline kernel 
+
+ALTERNATIVES
+============
+
+https://github.com/EddyBeaupre/armStrap - Well polished scripts yet not customizable enough for my needs (custom kernel repo to compile from for instance)

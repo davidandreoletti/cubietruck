@@ -9,6 +9,9 @@ LINUX_SUNXI_GIT_URL=${LINUX_SUNXI_GIT_URL:-"https://github.com/linux-sunxi/linux
 f_logINFO "Getting some handy tools"
 sudo apt-get install unp bc kpartx cu rsync wget git
 
+f_logINFO "Getting some handy tools for rootfs customization"
+sudo apt-get install qemu-user-static
+
 f_logINFO "Getting build essentials"
 sudo apt-get install build-essential libncurses5-dev
 
