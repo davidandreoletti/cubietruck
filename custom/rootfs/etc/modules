@@ -17,4 +17,4 @@ mali_drm
 #Networking
 bcmdhd
 sunxi_gmac
-sunxi_emac
+#sunxi_emac
