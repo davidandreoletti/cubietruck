@@ -1,7 +1,4 @@
 # Setup:
-## eth:
-### MAC addresse eth0 - set to static http://linux-sunxi.org/FirstSteps
-### DHCP - http://ubuntuforums.org/showthread.php?t=1979309
 ## wlan:
 ### MAC address wlan
 ### DHCP
