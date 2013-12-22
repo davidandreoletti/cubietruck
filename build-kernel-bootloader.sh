@@ -210,21 +210,27 @@ sudo umount /mnt
 f_logINFO "Installing rootfs"
 
 sudo mount -t ${ROOT_PARTITION_TYPE} ${cardroot} /mnt
-TMP_DIR=`mktemp -d`
-cd "${TMP_DIR}"
-unp "${ROOTFS_FILE_COMPRESSED}" > /dev/null
-cd -
-cd "${TMP_DIR}/binary"
-cp -pdxr ./ /mnt
-cd -
-rm -rf ${TMP_DIR}
+#TMP_DIR=`mktemp -d`
+#cd "${TMP_DIR}"
+#unp "${ROOTFS_FILE_COMPRESSED}" > /dev/null
+#cd -
+#cd "${TMP_DIR}/binary"
+#cp -pdxr ./ /mnt
+#cd -
+#rm -rf ${TMP_DIRA}
+sudo tar --numeric-owner -zxvf "${ROOTFS_FILE_COMPRESSED}" --strip-components=1 -C /mnt/
+sync
+ls -al /mnt
 sudo umount /mnt
 
 sudo mount -t ${ROOT_PARTITION_TYPE} ${cardroot} /mnt
 "${SCRIPT_DIR}/customize-mounted-rootfs.sh" "/mnt" "${SCRIPT_DIR}/custom/rootfs/"
+chmod -v 755 /mnt/
 ls -al /mnt/
 sudo umount /mnt
 
+f_logINFO "Generate build info".
+"${SCRIPT_DIR}/generate-build-info.sh"
 
 f_logINFO "SD Card Image done! Copy it over to a real SD Card and boot !".
 

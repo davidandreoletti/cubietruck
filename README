@@ -23,11 +23,12 @@ Description                      |SD Card         |Details
 :--------------------------------|:---------------|:--------------
 NAND support                     | NA             |
 SD card support                  | Working        |
-Distribution Ubuntu 12.04 LTS    | -              |
+Distribution Ubuntu              | -              |
  Ubuntu Core 12.04 LTS           | Not working    |
  Linaro Nano                     | Working        |
 OR Distribution Debian Wheezy    | Not working    |
-OpenSSH server                   | Not working    |
+SSH server                       | -              |
+OpenSSH server                   | Working        |
 Custom packages support          | Working        |
 NTP                              | -              |
 ->ntpd                           | Working        |

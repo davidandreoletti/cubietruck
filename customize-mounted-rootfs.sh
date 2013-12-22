@@ -35,10 +35,6 @@ mv -v etc/localtime etc/localtime.bkp
 ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
 # Add user
 useradd -s "/bin/bash" --password "admin" -U -m --comment "administrator" --expiredate "" --inactive "-1" myadmin
-
-
-# Reset /home permissions
-
 EOF
 
 # Quit chroot
@@ -47,6 +43,6 @@ mv etc/resolv.conf.saved etc/resolv.conf
 
 cd -
 
-rsync -av "${ROOTFS_CUSTOM_DIR}/" "${MNT_ROOTFS_DIR}" 
+rsync --ignore-times -rv --chmod=ugo=rwX "${ROOTFS_CUSTOM_DIR}/" "${MNT_ROOTFS_DIR}" 
 
 
