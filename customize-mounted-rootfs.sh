@@ -24,17 +24,29 @@ for m in `echo 'sys dev proc'`; do sudo mount /$m ./$m -o bind; done
 
 # chroot into your target filesystem
 sudo LC_ALL=C chroot . /bin/bash -x <<'EOF'
+# Get and install some packages
 apt-get update
+#apt-get -y install openssh-server vim
 apt-get -y install openssh-server openssh-client vim wireless-tools wpasupplicant hwinfo
 apt-get -y install rsync duplicity 
 apt-get -y install cpufrequtils
 apt-get -y install man
 apt-get -y install ntp
+# Set timezone
 mv -v etc/localtime etc/localtime.bkp
 #ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 
 ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
 # Add user
-useradd -s "/bin/bash" --password "admin" -U -m --comment "administrator" --expiredate "" --inactive "-1" myadmin
+useradd -s "/bin/bash" -U -m --comment "administrator" --expiredate "" --inactive "-1" myadmin
+echo "myadmin:admin"|chpasswd 
+adduser myadmin adm
+adduser myadmin dialout 
+adduser myadmin cdrom
+adduser myadmin audio
+adduser myadmin dip
+adduser myadmin video
+adduser myadmin plugdev
+adduser myadmin admin
 EOF
 
 # Quit chroot

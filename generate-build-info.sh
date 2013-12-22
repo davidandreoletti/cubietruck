@@ -17,10 +17,49 @@ function gitinfo()
 	cd -
 }
 
-BUILD_SCM_FILE=${1:-"`pwd`/build.scm"}
+# arg1: kernel dir
+function kernelinfo() 
+{
+	local dir="$1"
+	local f="$2"
+	cd "${dir}"
+	cp -v .config "${f}"
+	cd -
+}
+
+# arg1: fex file path
+function fexinfo() 
+{
+	local sf="$1"
+	local df="$2"
+	cp -v "${sf}" "${df}"
+}
+
+# arg1: uenv file path
+function uenvinfo() 
+{
+	local sf="$1"
+	local df="$2"
+	cp -v "${sf}" "${df}"
+}
+
+OUTPUT_DIR=${OUTPUT_DIR:-"`pwd`/output"}
+TMP_DIR=`mktemp -d`
+BUILD_SCM_FILE=${1:-"${TMP_DIR}/build-scm.txt"}
+BUILD_KERNEL_CONFIG_FILE=${1:-"${TMP_DIR}/kernel.config"}
+BUILD_FEX_CONFIG_FILE=${1:-"${TMP_DIR}/board.fex"}
+BUILD_UENV_CONFIG_FILE=${1:-"${TMP_DIR}/uEnv.txt"}
 
 gitinfo "linux-sunxi" "${BUILD_SCM_FILE}"
 gitinfo "sunxi-boards" "${BUILD_SCM_FILE}"
 gitinfo "sunxi-bsp" "${BUILD_SCM_FILE}"
 gitinfo "sunxi-tools" "${BUILD_SCM_FILE}"
 gitinfo "u-boot-sunxi" "${BUILD_SCM_FILE}"
+
+kernelinfo "linux-sunxi" "$BUILD_KERNEL_CONFIG_FILE"
+
+fexinfo "${OUTPUT_DIR}/cubietruck.fex" "$BUILD_FEX_CONFIG_FILE"
+
+uenvinfo "${OUTPUT_DIR}/uEnv.txt" "${BUILD_UENV_CONFIG_FILE}" 
+
+more ${TMP_DIR}/*

@@ -19,17 +19,17 @@ and get a predictable build in the process :)
 SUPPORT STATUS
 =====================
 
-Description                      |SD Card         |Details
+Description                      |SD Card Image   |Details
 :--------------------------------|:---------------|:--------------
 NAND support                     | NA             |
 SD card support                  | Working        |
 Distribution Ubuntu              | -              |
  Ubuntu Core 12.04 LTS           | Not working    |
  Linaro Nano                     | Working        |
-OR Distribution Debian Wheezy    | Not working    |
+ Debian Wheezy                   | Not working    |
 SSH server                       | -              |
-OpenSSH server                   | Working        |
-Custom packages support          | Working        |
+->OpenSSH server                 | Working        |
+Custom packages support          | Working        | 
 NTP                              | -              |
 ->ntpd                           | Working        |
 Ethernet support                 | -              |

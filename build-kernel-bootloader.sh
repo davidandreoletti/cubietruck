@@ -179,6 +179,7 @@ sudo echo "setenv bootargs ${LINUX_SUNXI_KERNEL_BOOT_ARGS} ${LINUX_SUNXI_KERNEL_
 sudo echo "printenv" >> ${BOOT_UENV_FILE} 
 # Load kernel and script.bin from partition
 sudo echo "fatload mmc 0 0x43000000 script.bin || ext2load mmc 0 0x43000000 boot/script.bin fatload mmc 0 0x48000000 uImage || ext2load mmc 0 0x48000000 uImage boot/uImage bootm 0x48000000" >> ${BOOT_UENV_FILE}
+cp -v "${BOOT_UENV_FILE}" "${OUTPUT_DIR}/uEnv.txt"
 ls -al /mnt/
 sudo umount /mnt
 
@@ -230,7 +231,7 @@ ls -al /mnt/
 sudo umount /mnt
 
 f_logINFO "Generate build info".
-"${SCRIPT_DIR}/generate-build-info.sh"
+"${SCRIPT_DIR}/generate-build-info.sh" "${OUTPUT_DIR}"
 
 f_logINFO "SD Card Image done! Copy it over to a real SD Card and boot !".
 
