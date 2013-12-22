@@ -8,3 +8,8 @@
 ## Rsync
 ## duplicity backup cheker daemon 
 ## change timezone http://dyhr.com/2013/11/22/how-to-install-lubuntu-server-on-cubietruck-from-mac-os-x/
+
+# Leds
+leds
+ledtrig-gpio
+

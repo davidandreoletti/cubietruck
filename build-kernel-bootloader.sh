@@ -215,7 +215,7 @@ cd "${TMP_DIR}"
 unp "${ROOTFS_FILE_COMPRESSED}" > /dev/null
 cd -
 cd "${TMP_DIR}/binary"
-cp -r ./ /mnt
+cp -pdxr ./ /mnt
 cd -
 rm -rf ${TMP_DIR}
 sudo umount /mnt

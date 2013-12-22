@@ -27,6 +27,18 @@ sudo LC_ALL=C chroot . /bin/bash -x <<'EOF'
 apt-get update
 apt-get -y install openssh-server openssh-client vim wireless-tools wpasupplicant hwinfo
 apt-get -y install rsync duplicity 
+apt-get -y install cpufrequtils
+apt-get -y install man
+apt-get -y install ntp
+mv -v etc/localtime etc/localtime.bkp
+#ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 
+ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
+# Add user
+useradd -s "/bin/bash" --password "admin" -U -m --comment "administrator" --expiredate "" --inactive "-1" myadmin
+
+
+# Reset /home permissions
+
 EOF
 
 # Quit chroot

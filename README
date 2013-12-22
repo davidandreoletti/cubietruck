@@ -19,36 +19,40 @@ and get a predictable build in the process :)
 SUPPORT STATUS
 =====================
 
-Description                      |SD Card      |Details
-:--------------------------------|:------------|:--------------
-NAND support                     |  NA         |
-SD card support                  |  Working    |
-Distribution Ubuntu 12.04 LTS    |  Not working|
- Ubuntu Core 12.04 LTS           |             |
- Linaro Nano                     |             |
-OR Distribution Debian Wheezy    |  Not working|
-OpenSSH server                   |  Not working|
-Custom packages support          |  Working    |
-ntpd                             |  Not working|
-Ethernet support                 |  Not working|
-->DHCP IP                        |  Working    | custom/rootfs/etc/network/interfaces
-->Sunxi-GMAC driver support      |  Working    |
--->Driver loaded at startup      |  Working    | custom/rootfs/etc/modules
--->Static MAC address on boot    |  Working    | custom/rootfs/etc/network/interfaces
-->Sunxi-EMAC driver support      |  NA         |
--->Driver loaded at startup      |  NA         |
--->Static MAC address on boot    |  NA         |
-Wifi support                     |  Not working|
-->??? driver support	         |  Not working|
--->Driver loaded at startup      |  Not working|
--->Static MAC address on boot    |  Not working|
-->DHCP IP                        |  Not working|
-SATA support                     |  Not working|  
-ZFS support                      |  Not working|
-ZFS Raid Z support               |  Not working|
-3D MALI support                  |  Not working|
-CedarX acclerated video	         |  Not working|
-Bluetooth support                |  Not working|
+Description                      |SD Card         |Details
+:--------------------------------|:---------------|:--------------
+NAND support                     | NA             |
+SD card support                  | Working        |
+Distribution Ubuntu 12.04 LTS    | -              |
+ Ubuntu Core 12.04 LTS           | Not working    |
+ Linaro Nano                     | Working        |
+OR Distribution Debian Wheezy    | Not working    |
+OpenSSH server                   | Not working    |
+Custom packages support          | Working        |
+NTP                              | -              |
+->ntpd                           | Working        |
+Ethernet support                 | -              |
+->DHCP IP                        | Working        | custom/rootfs/etc/network/interfaces
+->Sunxi-GMAC driver support      | Working        |
+-->Driver loaded at startup      | Working        | custom/rootfs/etc/modules
+-->Static MAC address on boot    | Working        | custom/rootfs/etc/network/interfaces
+->Sunxi-EMAC driver support      | NA             |
+-->Driver loaded at startup      | NA             |
+-->Static MAC address on boot    | NA             |
+Wifi support                     | -              |
+->??? driver support	         | Not working    | 
+-->Driver loaded at startup      | Not working    |
+-->Static MAC address on boot    | Not working    |
+->DHCP IP                        | Not working    |
+SATA support                     | Not working    |  
+ZFS support                      | Not working    |
+ZFS Raid Z support               | Not working    |
+3D MALI support                  | Not working    |
+CedarX acclerated video	         | Not working    |
+Bluetooth support                | Not working    |
+Hardware sensor support          | -              |
+-> CPUFreq                       | Working        | 
+--> Default governor at startup  | ondemand       | custom/rootfs/etc/default/cpufrequtils
 
 INSTALLATION:
 =============
@@ -158,6 +162,12 @@ AllWinner's linux kernel and current attempts to get their changes in mainline k
 http://linux-sunxi.org/Mainline_Kernel_Howto - AllWinner Community trying to get linux-sunxi work into the mainline kernel
 http://lwn.net/Articles/554822/ - Merging Allwinner support
 http://lists.debian.org/debian-arm/2013/06/msg00009.html - Thread about how to convince (among others topic related to Allwinner) Allwinner to merge their kernel work in mainline kernel 
+
+NTP
+---
+http://derekmolloy.ie/automatically-setting-the-beaglebone-black-time-using-ntp/ - Set NTP
+https://wiki.gentoo.org/wiki/Localization/HOWTO
+http://ubuntuforums.org/showthread.php?t=862620 - test ntp
 
 ALTERNATIVES
 ============
