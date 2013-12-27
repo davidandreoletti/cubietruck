@@ -26,6 +26,8 @@ for m in `echo 'sys dev proc'`; do sudo mount /$m ./$m -o bind; done
 
 # chroot into your target filesystem
 sudo LC_ALL=C chroot . /bin/bash -x <<'EOF'
+USER_ADMIN_LOGIN=administrator""
+USER_ADMIN_FULLNAME="Administrator"
 # Install custom startup scripts
 chmod +x /etc/init.d/host/cubian-*
 update-rc.d cubian-firstrun defaults
@@ -47,16 +49,16 @@ mv -v etc/localtime etc/localtime.bkp
 #ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 
 ln -s /usr/share/zoneinfo/Europe/Paris /etc/localtime
 # Add user
-useradd -s "/bin/bash" -U -m --comment "administrator" --expiredate "" --inactive "-1" myadmin
-echo "myadmin:admin"|chpasswd 
-adduser myadmin adm
-adduser myadmin dialout 
-adduser myadmin cdrom
-adduser myadmin audio
-adduser myadmin dip
-adduser myadmin video
-adduser myadmin plugdev
-adduser myadmin admin
+useradd -s "/bin/bash" -U -m --comment "${USER_ADMIN_FULLNAME}" --expiredate "" --inactive "-1" "${USER_ADMIN_LOGIN}"
+echo "${USER_ADMIN_LOGIN}:admin"|chpasswd 
+adduser "${USER_ADMIN_LOGIN}" adm
+adduser "${USER_ADMIN_LOGIN}" dialout 
+adduser "${USER_ADMIN_LOGIN}" cdrom
+adduser "${USER_ADMIN_LOGIN}" audio
+adduser "${USER_ADMIN_LOGIN}" dip
+adduser "${USER_ADMIN_LOGIN}" video
+adduser "${USER_ADMIN_LOGIN}" plugdev
+adduser "${USER_ADMIN_LOGIN}" admin
 EOF
 
 # Quit chroot

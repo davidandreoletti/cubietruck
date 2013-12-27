@@ -23,11 +23,14 @@ Description                      |SD Card Image   |Details
 :--------------------------------|:---------------|:--------------
 NAND support                     | NA             |
 SD card support                  | Working        |
-Distribution Ubuntu              | -              |
+RootFS                           | -              |
  Ubuntu Core 12.04 LTS           | Not working    |
  Linaro Nano                     | Working        |
  Debian Wheezy                   | Not working    |
 2B RAM support                   | Working        |
+Default User                     | -              |
+-> administrator                 | Working        | Password: "admin"
+-> linaro                        | Working        | Password: "linaro" . For Linaro based RootFS
 SSH server                       | -              |
 ->OpenSSH server                 | Working        |
 Custom packages support          | Working        | 
@@ -39,21 +42,26 @@ Ethernet support                 | -              |
 -->Driver loaded at startup      | Working        | custom/rootfs/etc/modules
 -->Static MAC address on boot    | Working        | custom/rootfs/etc/network/interfaces
 ->Sunxi-EMAC driver support      | NA             |
--->Driver loaded at startup      | NA             |
+-->Driver loaded at startup      | Not loaded     | Sunxi-GMAC replaces Sunxi-EMAC driver
 -->Static MAC address on boot    | NA             |
 Wifi support                     | -              |
 ->??? driver support	         | Not working    | 
 -->Driver loaded at startup      | Not working    |
 -->Static MAC address on boot    | Not working    |
 ->DHCP IP                        | Not working    |
-SATA support                     | Not working    |  
-ZFS support                      | Not working    |
-ZFS Raid Z support               | Not working    |
-3D MALI support                  | Not working    |
-CedarX acclerated video	         | Not working    |
-Bluetooth support                | Not working    |
-LEDS driver support              | Working        | Kernel config: CONFIG_LEDS_SUNXI=y
-->Enabled trigger                | Working        | Kernel confgs: CONFIG_LEDS_TRIGGERS=y, CONFIG_LEDS_TRIGGER_*=y 
+HDD support                      | -              |  
+->SATA support                   | Not working    |  
+->RAID support                   | Not working    |  
+->Disk spindown support          | Not working    |  
+->Disk turnoff support           | Not working    |  
+->ZFS support                    | Not Planned    | ZFS is very unstable on 32bit hardware. 
+                                 |                | Rationale: http://www.cubieforums.com/index.php/topic,1258.msg7779/topicseen.html#msg77793D MALI support
+CedarX acclerated video	         | Not Planned    |
+Bluetooth support                | Not Planned    |
+LEDs support                     | -              |
+->LEDS driver support            | Working        | Kernel config: CONFIG_LEDS_SUNXI=y
+->Default setup via FEX file     | Working        | output/*.fex 
+-->Enabled triggers              | Working        | Kernel confgs: CONFIG_LEDS_TRIGGERS=y, CONFIG_LEDS_TRIGGER_*=y 
 ->Control via /sys/class/leds/*  | Working        |
 ->Disabled LEDS on boot          | Not Working    |
 Hardware sensor support          | -              |
@@ -62,6 +70,15 @@ Hardware sensor support          | -              |
 Boot                             | -              | 
 ->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 ->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
+
+Caption
+-------
+
+NA           = Not Applicable
+Working      = It has been tested and it does work
+Not Working  = It has not been tested 
+               OR it has been tested and it does not work
+Not Planned  = Not plan to be supported
 
 INSTALLATION:
 =============
@@ -95,12 +112,13 @@ Main source repository: https://github.com/davidandreoletti/cubietruck
 REQUIREMENTS
 ============
 
-Succesfully tested on Ubuntu 12.04 LTS 
+Succesfully tested on Ubuntu 12.04 LTS with Bash 4.2.25
 
 CONTRIBUTORS:
 =============
 
-If you would like to contribute, feel free to do so.
+If you would like to contribute, feel free to do so. This is a Pull request
+friendly project.
 
 AUTHOR
 ======
