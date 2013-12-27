@@ -27,6 +27,7 @@ Distribution Ubuntu              | -              |
  Ubuntu Core 12.04 LTS           | Not working    |
  Linaro Nano                     | Working        |
  Debian Wheezy                   | Not working    |
+2B RAM support                   | Working        |
 SSH server                       | -              |
 ->OpenSSH server                 | Working        |
 Custom packages support          | Working        | 
@@ -51,9 +52,16 @@ ZFS Raid Z support               | Not working    |
 3D MALI support                  | Not working    |
 CedarX acclerated video	         | Not working    |
 Bluetooth support                | Not working    |
+LEDS driver support              | Working        | Kernel config: CONFIG_LEDS_SUNXI=y
+->Enabled trigger                | Working        | Kernel confgs: CONFIG_LEDS_TRIGGERS=y, CONFIG_LEDS_TRIGGER_*=y 
+->Control via /sys/class/leds/*  | Working        |
+->Disabled LEDS on boot          | Not Working    |
 Hardware sensor support          | -              |
--> CPUFreq                       | Working        | 
---> Default governor at startup  | ondemand       | custom/rootfs/etc/default/cpufrequtils
+->CPUFreq                        | Working        | 
+-->Default governor at startup   | ondemand       | custom/rootfs/etc/default/cpufrequtils
+Boot                             | -              | 
+->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
+->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 
 INSTALLATION:
 =============

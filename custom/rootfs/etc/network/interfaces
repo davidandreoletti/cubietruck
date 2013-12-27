@@ -4,3 +4,9 @@ auto eth0
 allow-hotplug eth0
 iface eth0 inet dhcp
 	hwaddress ether AE:50:30:27:5A:CF
+
+# The secondary interface
+iface wlan0 inet dhcp
+    wpa-ssid DummySSID 
+    wpa-psk dummyNotEncryptedPassphrase
+# to generate proper encrypted key: wpa_passphrase yourSSID yourpassword

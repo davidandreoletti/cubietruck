@@ -1,0 +1,87 @@
+#! /bin/sh
+
+### BEGIN INIT INFO
+# Provides:          cubian-firstrun
+# Required-Start:    $local_fs
+# Required-Stop:
+# Should-Start:
+# Default-Start:     S   
+# Default-Stop:
+# Short-Description: Script to run when cubian first starting
+# Description:       Something needs to be done when cubian is
+#                    starting at first time.
+#                      
+#                    1. regenerate ssh host key
+#                    2. regenerate ajenti private key
+### END INIT INFO
+
+N=/etc/init.d/cubian-firstrun
+
+set -e
+
+do_expand_rootfs(){
+	device="/dev/mmcblk0"
+	root_part=$(/bin/readlink /dev/root)
+	part_num=${root_part#mmcblk0p}
+	if [ "$part_num" = "$root_part" ];then
+		echo "Failed to expand rootfs, must be run on a SD card"
+		return 1
+	fi
+	if [ "$part_num" -ne "1" ];then
+		echo "Failed to expand rootfs, customed partition table is not supported"
+		return 2
+	fi
+	last_part_num=$(/sbin/parted ${device} -ms unit s p | tail -n 1 | cut -f 1 -d:)
+	if [ "$last_part_num" != "$part_num" ];then
+		echo "Failed to expand rootfs, /dev/root is not the last partition"
+		return 3
+	fi
+	part_start=$(parted ${device} -ms unit s p | grep "^${part_num}" | cut -f 2 -d:)
+	[ "$part_start" ] || return 4
+	echo "
+p
+d
+${part_num}
+n
+p
+${part_num}
+${part_start}
+
+p
+w
+q
+" | fdisk ${device} > /dev/null
+return 0
+}
+
+case "$1" in
+  start)
+	    reboot=false
+        if ! ls /etc/ssh/ssh_host_* > /dev/null 2>&1;then
+                if which sshd > /dev/null;then
+                        dpkg-reconfigure openssh-server
+                fi
+        fi
+	#	/usr/bin/ajenti-ssl-gen `/bin/hostname` -f
+		set +e
+		echo "Expanding rootfs..."
+		if do_expand_rootfs;then
+			echo "Exanding rootfs success, reboot automatically"
+			/sbin/insserv cubian-resize2fs
+	    	reboot=true
+		else
+			echo "Exanding rootfs has failed, see previous error messages"
+		fi
+		set -e
+		/sbin/insserv -r cubian-firstrun
+		if $reboot;then
+			/sbin/reboot
+		fi
+        ;;
+  *)
+        echo "Usage: $N {start}" >&2
+        exit 1
+        ;;
+esac
+
+exit 0
