@@ -45,10 +45,10 @@ function uenvinfo()
 
 OUTPUT_DIR=${OUTPUT_DIR:-"`pwd`/output"}
 TMP_DIR=`mktemp -d`
-BUILD_SCM_FILE=${1:-"${TMP_DIR}/build-scm.txt"}
-BUILD_KERNEL_CONFIG_FILE=${1:-"${TMP_DIR}/kernel.config"}
-BUILD_FEX_CONFIG_FILE=${1:-"${TMP_DIR}/board.fex"}
-BUILD_UENV_CONFIG_FILE=${1:-"${TMP_DIR}/uEnv.txt"}
+BUILD_SCM_FILE=${BUILD_SCM_FILE:-"${TMP_DIR}/build-scm.txt"}
+BUILD_KERNEL_CONFIG_FILE=${BUILD_KERNEL_CONFIG_FILE:-"${TMP_DIR}/kernel.config"}
+BUILD_FEX_CONFIG_FILE=${BUILD_FEX_CONFIG_FILE:-"${TMP_DIR}/board.fex"}
+BUILD_UENV_CONFIG_FILE=${BUILD_UENV_CONFIG_FILE:-"${TMP_DIR}/uEnv.txt"}
 
 gitinfo "linux-sunxi" "${BUILD_SCM_FILE}"
 gitinfo "sunxi-boards" "${BUILD_SCM_FILE}"
