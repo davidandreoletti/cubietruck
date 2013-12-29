@@ -41,7 +41,8 @@ apt-get -y install cpufrequtils
 apt-get -y install man
 apt-get -y install ntp
 apt-get -y install udev
-apt-get -y install tree 
+apt-get -y install tree
+apt-get -y install hddtemp 
 # Set timezone
 mv -v etc/localtime etc/localtime.bkp
 #ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 

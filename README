@@ -46,7 +46,7 @@ Wifi support                     | -              |
 -->Driver loaded at startup      | Not working    |
 -->Static MAC address on boot    | Not working    |
 ->DHCP IP                        | Not working    |
-SATA support                     | Not working    |  
+SATA support                     | Working        |  
 ZFS support                      | Not working    |
 ZFS Raid Z support               | Not working    |
 3D MALI support                  | Not working    |
@@ -59,6 +59,7 @@ LEDS driver support              | Working        | Kernel config: CONFIG_LEDS_S
 Hardware sensor support          | -              |
 ->CPUFreq                        | Working        | 
 -->Default governor at startup   | ondemand       | custom/rootfs/etc/default/cpufrequtils
+->HDDtemp                        | Working        | 
 Boot                             | -              | 
 ->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 ->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
@@ -177,6 +178,10 @@ NTP
 http://derekmolloy.ie/automatically-setting-the-beaglebone-black-time-using-ntp/ - Set NTP
 https://wiki.gentoo.org/wiki/Localization/HOWTO
 http://ubuntuforums.org/showthread.php?t=862620 - test ntp
+
+GPIO
+----
+https://groups.google.com/forum/#!topic/cubieboard/Oot7xZSKLpI - Fex config
 
 ALTERNATIVES
 ============
