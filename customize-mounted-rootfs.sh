@@ -27,7 +27,7 @@ for m in `echo 'sys dev proc'`; do sudo mount /$m ./$m -o bind; done
 # chroot into your target filesystem
 sudo LC_ALL=C chroot . /bin/bash -x <<'EOF'
 # Install custom startup scripts
-chmod +x /etc/init.d/host/cubian-*
+chmod +x /etc/init.d/cubian-*
 update-rc.d cubian-firstrun defaults
 # Get and install some packages
 apt-get update
