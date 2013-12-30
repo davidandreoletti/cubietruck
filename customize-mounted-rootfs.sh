@@ -29,7 +29,7 @@ sudo LC_ALL=C chroot . /bin/bash -x <<'EOF'
 USER_ADMIN_LOGIN=administrator""
 USER_ADMIN_FULLNAME="Administrator"
 # Install custom startup scripts
-chmod +x /etc/init.d/host/cubian-*
+chmod +x /etc/init.d/cubian-*
 update-rc.d cubian-firstrun defaults
 # Get and install some packages
 apt-get update
@@ -43,7 +43,8 @@ apt-get -y install cpufrequtils
 apt-get -y install man
 apt-get -y install ntp
 apt-get -y install udev
-apt-get -y install tree 
+apt-get -y install tree
+apt-get -y install hddtemp 
 # Set timezone
 mv -v etc/localtime etc/localtime.bkp
 #ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 

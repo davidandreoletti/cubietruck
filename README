@@ -50,26 +50,28 @@ Wifi support                     | -              |
 -->Static MAC address on boot    | Not working    |
 ->DHCP IP                        | Not working    |
 HDD support                      | -              |  
-->SATA support                   | Not working    |  
+->SATA support                   | Working        |  
 ->RAID support                   | Not working    |  
 ->Disk spindown support          | Not working    |  
 ->Disk turnoff support           | Not working    |  
-->ZFS support                    | Not Planned    | ZFS is very unstable on 32bit hardware. 
+ZFS support                      | Not Planned    | ZFS is very unstable on 32bit hardware. 
                                  |                | Rationale: http://www.cubieforums.com/index.php/topic,1258.msg7779/topicseen.html#msg77793D MALI support
 CedarX acclerated video	         | Not Planned    |
 Bluetooth support                | Not Planned    |
-LEDs support                     | -              |
+MALI support                     | Not working    |
+LEDS support                     | -              | 
 ->LEDS driver support            | Working        | Kernel config: CONFIG_LEDS_SUNXI=y
 ->Default setup via FEX file     | Working        | output/*.fex 
--->Enabled triggers              | Working        | Kernel confgs: CONFIG_LEDS_TRIGGERS=y, CONFIG_LEDS_TRIGGER_*=y 
+-->Enabled triggers              | Working        | Kernel confgs: CONFIG_LEDS_TRIGGERS=y, CONFIG_LEDS_TRIGGER_*=y
 ->Control via /sys/class/leds/*  | Working        |
 ->Disabled LEDS on boot          | Not Working    |
 Hardware sensor support          | -              |
 ->CPUFreq                        | Working        | 
 -->Default governor at startup   | ondemand       | custom/rootfs/etc/default/cpufrequtils
+->HDDtemp                        | Working        | 
 Boot                             | -              | 
-->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
-->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
+->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
+->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 
 Caption
 -------
@@ -195,6 +197,10 @@ NTP
 http://derekmolloy.ie/automatically-setting-the-beaglebone-black-time-using-ntp/ - Set NTP
 https://wiki.gentoo.org/wiki/Localization/HOWTO
 http://ubuntuforums.org/showthread.php?t=862620 - test ntp
+
+GPIO
+----
+https://groups.google.com/forum/#!topic/cubieboard/Oot7xZSKLpI - Fex config
 
 ALTERNATIVES
 ============

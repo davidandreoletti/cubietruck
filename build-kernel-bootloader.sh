@@ -68,6 +68,15 @@ cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FIL
 echo [dynamic] >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" # http://linux-sunxi.org/EMAC
 echo MAC = "${MAC_ETH0}" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
 
+echo "
+
+[gpio_para]
+gpio_used = 0
+gpio_num = 0
+
+" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
+
+
 f_logINFO "Create ${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE} from ${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
 
 test -e ${FEX2BIN_EXEC_FILE};
