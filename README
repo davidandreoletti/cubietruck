@@ -61,8 +61,8 @@ Hardware sensor support          | -              |
 -->Default governor at startup   | ondemand       | custom/rootfs/etc/default/cpufrequtils
 ->HDDtemp                        | Working        | 
 Boot                             | -              | 
-->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
-->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/host/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
+->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
+->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 
 INSTALLATION:
 =============
