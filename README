@@ -67,7 +67,7 @@ LEDS support                     | -              |
 ->Disabled LEDS on boot          | Not Working    |
 Hardware sensor support          | -              |
 ->CPUFreq                        | Working        | 
--->Default governor at startup   | ondemand       | custom/rootfs/etc/default/cpufrequtils
+-->Default governor at startup   | interactive    | custom/rootfs/etc/default/cpufrequtils - See http://www.cubieforums.com/index.php/topic,1413.msg8743.html#msg8743
 ->HDDtemp                        | Working        | 
 Boot                             | -              | 
 ->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
@@ -201,6 +201,10 @@ http://ubuntuforums.org/showthread.php?t=862620 - test ntp
 GPIO
 ----
 https://groups.google.com/forum/#!topic/cubieboard/Oot7xZSKLpI - Fex config
+
+APT
+---
+http://raphaelhertzog.com/2010/09/21/debian-conffile-configuration-file-managed-by-dpkg/ 
 
 ALTERNATIVES
 ============

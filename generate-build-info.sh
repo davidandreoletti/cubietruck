@@ -43,6 +43,8 @@ function uenvinfo()
 	cp -v "${sf}" "${df}"
 }
 
+set -x
+
 OUTPUT_DIR=${OUTPUT_DIR:-"`pwd`/output"}
 TMP_DIR=`mktemp -d`
 BUILD_SCM_FILE=${BUILD_SCM_FILE:-"${TMP_DIR}/build-scm.txt"}
@@ -62,4 +64,4 @@ fexinfo "${OUTPUT_DIR}/cubietruck.fex" "$BUILD_FEX_CONFIG_FILE"
 
 uenvinfo "${OUTPUT_DIR}/uEnv.txt" "${BUILD_UENV_CONFIG_FILE}" 
 
-more ${TMP_DIR}/*
+#more ${TMP_DIR}/*

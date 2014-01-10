@@ -6,7 +6,7 @@ SCRIPT_DIR=${SCRIPT_DIR:-`pwd`}
 OUTPUT_DIR=${OUTPUT_DIR:-"`pwd`/output"}
 OUTPUT_CLEAN=${OUTPUT_CLEAN:-true}
 # Toolchain: http://linux-sunxi.org/Toolchain
-TOOLCHAIN="arm-linux-gnueabi-"
+TOOLCHAIN=${TOOLCHAIN:-"arm-linux-gnueabihf-"}
 SCRIPT_BIN_FILE="script.bin"
 SUNXI_TOOLS_DIR=${SUNXI_TOOLS_DIR:-"`pwd`/sunxi-tools"}
 FEX2BIN_EXEC_FILE="${SUNXI_TOOLS_DIR}/fex2bin"
@@ -14,7 +14,8 @@ FEX2BIN_EXEC_FILE="${SUNXI_TOOLS_DIR}/fex2bin"
 # Value: https://github.com/linux-sunxi/u-boot-sunxi/blob/sunxi/boards.cfg
 U_BOOT_SUNXI_BOARD_MODEL="Cubietruck"
 U_BOOT_SUNXI_DIR=${U_BOOT_SUNXI_DIR:-"`pwd`/u-boot-sunxi"}
-U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE="`pwd`/sunxi-boards/sys_config/a20/cubietruck.fex"
+#U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE="`pwd`/sunxi-boards/sys_config/a20/cubietruck.fex"
+U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE="`pwd`/sunxi-boards/sysconfig/linux/cubietruck.fex"
 U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE="${OUTPUT_DIR}/cubietruck.fex"
 U_BOOT_SUNXI_BOARD_FEX_BIN_FILE=${OUTPUT_DIR}/${SCRIPT_BIN_FILE}
 U_BOOT_SUNXI_BOARD_UBOOT_WITH_SPL_BIN_FILE=${U_BOOT_SUNXI_BOARD_UBOOT_WITH_SPL_BIN_FILE:-"${U_BOOT_SUNXI_DIR}/u-boot-sunxi-with-spl.bin"}
@@ -25,7 +26,7 @@ U_BOOT_SUNXI_CLEAN=${U_BOOT_SUNXI_CLEAN:-false}
 U_BOOT_SUNXI_BUILD_SKIP=${U_BOOT_SUNXI_BUILD_SKIP:-false}
 MAC_ETH0=${MAC_ETH0:-"000000000000"}
 LINUX_SUNXI_DIR=${LINUX_SUNXI_DIR:-"`pwd`/linux-sunxi"}
-LINUX_SUNXI_KERNEL_BRANCH_NAME=${LINUX_SUNXI_KERNEL_BRANCH_NAME:-"sunxi-3.4"}
+LINUX_SUNXI_KERNEL_BRANCH_NAME=${LINUX_SUNXI_KERNEL_BRANCH_NAME:-"pat-3.4.75-ct"}
 LINUX_SUNXI_KERNEL_DEFAULT_CONFIG=${LINUX_SUNXI_KERNEL_DEFAULT_CONFIG:-"sun7i_defconfig"}
 LINUX_SUNXI_KERNEL_CUSTOM_CONFIG_FILE=${LINUX_SUNXI_KERNEL_CUSTOM_CONFIG:-"${SCRIPT_DIR}/custom/kernel/config/.config"}
 LINUX_SUNXI_KERNEL_CUSTOM_CONFIG_USE=${LINUX_SUNXI_KERNEL_CUSTOM_CONFIG_USE:-true}
@@ -36,7 +37,7 @@ LINUX_SUNXI_CLEAN=${LINUX_SUNXI_CLEAN:-false}
 LINUX_SUNXI_BUILD_SKIP=${LINUX_SUNXI_BUILD_SKIP:-false}
 LINUX_SUNXI_CONFIG_SKIP=${LINUX_SUNXI_CONFIG_SKIP:-false}
 SDCARD_IMG_FILE="${OUTPUT_DIR}/sdcard.img"
-SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"4096"} # 4Gb (for dd's count parameters)
+SDCARD_IMG_SIZE=${SDCARD_IMG_SIZE:-"1024"} # 1Gb (for dd's count parameters)
 SDCARD_LOOPBACK_DEVICE="UNDEFINED"
 ROOTFS_FILE_COMPRESSED=${ROOTFS_FILE_COMPRESSED:-"${WORKING_DIR}/rootfs.tar.gz"}
 BOOT_PARTITION_SIZE=64
@@ -68,15 +69,6 @@ cp -v "${U_BOOT_SUNXI_BOARD_FEX_ORIG_FILE}" "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FIL
 echo [dynamic] >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" # http://linux-sunxi.org/EMAC
 echo MAC = "${MAC_ETH0}" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
 
-echo "
-
-[gpio_para]
-gpio_used = 0
-gpio_num = 0
-
-" >> "${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}"
-
-
 f_logINFO "Create ${U_BOOT_SUNXI_BOARD_FEX_BIN_FILE} from ${U_BOOT_SUNXI_BOARD_FEX_CUSTOM_FILE}" 
 
 test -e ${FEX2BIN_EXEC_FILE};
@@ -95,7 +87,9 @@ cd ${LINUX_SUNXI_DIR}
 if ! ${LINUX_SUNXI_BUILD_SKIP} ;
 then
 	${LINUX_SUNXI_PULL} && git pull && git checkout -b "${LINUX_SUNXI_KERNEL_BRANCH_NAME}"
+	${LINUX_SUNXI_CLEAN} && make clean
 	${LINUX_SUNXI_CLEAN} && make distclean
+	patch -f drivers/gpio/gpio-sunxi.c < ${SCRIPT_DIR}/custom/kernel/patches/gpio.patch || true
 	echo "Load default kernel config"
 	make ARCH=arm CROSS_COMPILE="${TOOLCHAIN}" "${LINUX_SUNXI_KERNEL_DEFAULT_CONFIG}"
 	${LINUX_SUNXI_KERNEL_CUSTOM_CONFIG_USE} && cp -v "${LINUX_SUNXI_KERNEL_CUSTOM_CONFIG_FILE}" .config

@@ -33,7 +33,7 @@ chmod +x /etc/init.d/cubian-*
 update-rc.d cubian-firstrun defaults
 # Get and install some packages
 apt-get update
-#apt-get -y install openssh-server vim
+#apt-get -y install vim wireless-tools wpasupplicant hwinfo
 apt-get -y install locales
 dpkg-reconfigure locales
 export LANG=en_US.UTF-8
@@ -41,10 +41,15 @@ apt-get -y install openssh-server openssh-client vim wireless-tools wpasupplican
 apt-get -y install rsync duplicity 
 apt-get -y install cpufrequtils
 apt-get -y install man
-apt-get -y install ntp
+apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" -y install ntp
 apt-get -y install udev
 apt-get -y install tree
-apt-get -y install hddtemp 
+apt-get -y install hddtemp
+apt-get -y install insserv # for cubian* init scripts
+apt-get -y install resolvconf iputils-ping iproute
+apt-get -y install usbutils
+apt-get -y install ca-certificates 
+apt-get -y install parted
 # Set timezone
 mv -v etc/localtime etc/localtime.bkp
 #ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 
@@ -65,7 +70,7 @@ EOF
 # Quit chroot
 for m in `echo 'sys dev proc'`; do sudo umount ./$m; done
 mv etc/resolv.conf.saved etc/resolv.conf
-
+rm -vf etc/apt/apt.conf.d/01proxy
 cd -
 
 
