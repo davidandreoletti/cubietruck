@@ -50,6 +50,7 @@ apt-get -y install resolvconf iputils-ping iproute
 apt-get -y install usbutils
 apt-get -y install ca-certificates 
 apt-get -y install parted
+apt-get -y install ifenslave # NIC bonding
 # Set timezone
 mv -v etc/localtime etc/localtime.bkp
 #ln -s /usr/share/zoneinfo/Asia/Taipei /etc/localtime 

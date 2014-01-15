@@ -1,12 +1,21 @@
+# The first network bond
+auto bond0
+iface bond0 inet dhcp
+bond-mode 1
+bond-miimon 100
+slaves eth0 wlan0
+
 # The primary interface
 #  - MAC is "locally administered". See http://en.wikipedia.org/wiki/MAC_address
 auto eth0
-allow-hotplug eth0
-iface eth0 inet dhcp
+iface eth0 inet manual 
 	hwaddress ether AE:50:30:27:5A:CF
-
+	bond-master bond0
 # The secondary interface
-iface wlan0 inet dhcp
-    wpa-ssid DummySSID 
-    wpa-psk dummyNotEncryptedPassphrase
+#  - MAC is "locally administered". See http://en.wikipedia.org/wiki/MAC_address
+auto wlan0
+iface wlan0 inet manual
+	wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+	hwaddress ether AE:50:30:27:5A:CE
+	bond-master bond0
 # to generate proper encrypted key: wpa_passphrase yourSSID yourpassword

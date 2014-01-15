@@ -19,5 +19,8 @@ bcmdhd
 sunxi_gmac
 #sunxi_emac
 
+#Networking bonding
+bonding
+
 #GPIO
 gpio_sunxi

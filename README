@@ -45,11 +45,12 @@ Ethernet support                 | -              |
 -->Driver loaded at startup      | Not loaded     | Sunxi-GMAC replaces Sunxi-EMAC driver
 -->Static MAC address on boot    | NA             |
 Wifi support                     | -              |
-->??? driver support	         | Not working    | 
--->Driver loaded at startup      | Not working    |
--->Static MAC address on boot    | Not working    |
+->AP6210 driver support	         | Working        | 
+-->Driver loaded at startup      | Working        |
+-->Static MAC address on boot    | Working        |
 ->DHCP IP                        | Not working    |
-HDD support                      | -              |  
+NIC Bonding                      | Not working    | custom/rootfs/etc/network/interfaces - Kernel configs: CONFIG_BONDING
+HDD support                      | -              |
 ->SATA support                   | Working        |  
 ->RAID support                   | Not working    |  
 ->Disk spindown support          | Not working    |  
