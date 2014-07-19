@@ -74,6 +74,9 @@ Boot                             | -              |
 ->Resize rootfs partition        | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 ->Reconfigure OpenSSH            | Not working    | custom/rootfs/etc/init.d/cubian-*   - Courtesy: http://www.igorpecovnik.com/2013/12/24/cubietruck-debian-wheezy-sd-card-image
 
+This project is NOT maintained anymore. Please use the following alternative:
+- [igorpecovnik/Cubietruck-Debian](https://github.com/igorpecovnik/Cubietruck-Debian)
+
 Caption
 -------
 
